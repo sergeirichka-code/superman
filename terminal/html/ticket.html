@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="ru-ru" dir="ltr" xml:lang="ru-ru" xmlns="http://www.w3.org/1999/xhtml" slick-uniqueid="3">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ticket</title>
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<script src="js/dispatcher.js"></script>
+<script src="js/qrcode.js"></script>
+
+<script>
+	var timer = 45000;
+	var chekUrl = '';
+    var checkSentToEmail = false;
+    var checkSentToSMS = false;
+
+    function initPage() {
+
+      var param = getReqParams();
+      var check = param['check'];
+      checkSentToEmail = param['checkSentToEmail'] && param['checkSentToEmail'] == 'true';
+      checkSentToSMS = param['checkSentToSMS'] && param['checkSentToSMS'] == 'true';
+
+      if (check != null && check != '') {
+        chekUrl = decodeURIComponent(check);
+
+        new QRCode('check_qr', {
+          text: chekUrl,
+          width: 200,
+          height: 200,
+          colorDark : "#000000",
+          colorLight : "#f1f1f1",
+          correctLevel : QRCode.CorrectLevel.H
+        });
+
+        $("#ticket").show();
+      }
+    }
+
+	function init(info) {
+
+      var OPTIONS = info.options;
+
+      if (OPTIONS != null && OPTIONS['printTicket'] != 'true') {
+        $("#field_ticket").hide();
+      }
+
+      if (OPTIONS != null && (OPTIONS['printCheckConfirm'] == 'true' ||
+              checkSentToEmail && (OPTIONS['printCheckOrEmail'] == 'true' || OPTIONS['printCheckOrSMS'] == 'true') ||
+              checkSentToSMS && OPTIONS['printCheckOrSMS'] == 'true')
+              && OPTIONS['printCheck'] == 'true' && chekUrl != '') {
+        $("#check_print").show();
+      }
+
+      if (checkSentToEmail) {
+        $("#field_sent_email").show();
+      }
+
+      if (checkSentToSMS && OPTIONS['printCheckOrSMS'] == 'true') {
+        $("#field_sent_sms").show();
+      }
+
+      if (OPTIONS != null && OPTIONS['tipsUrl']) {
+
+        new QRCode('tips_qr', {
+          text: OPTIONS['tipsUrl'],
+          width: 200,
+          height: 200,
+          colorDark : "#000000",
+          colorLight : "#f1f1f1",
+          correctLevel : QRCode.CorrectLevel.H
+        });
+
+        $("#tips").show();
+      }
+
+       checkTimer();
+	}
+	
+	function checkTimer() {
+		timer = timer - 1000;
+
+		if (timer <= 0)
+			next();
+		
+		setTimeout('checkTimer();', 1000);
+	}
+
+	function next() {
+      document.location.href = 'index.html';
+    }
+
+    function printCopy() {
+      $("#check_print").prop('disabled', true);
+      frPrintCheckCopy();
+    }
+
+    function handleFRResponse(result, obj) {
+      next();
+    }
+
+</script>
+
+</head>
+<body onload="initPage(); DispatcherWebSocket();">
+<div class="logo"></div>
+<div class="container">
+  <div class="recept">
+    <div class="line2 font_48" id="field_thnx">Спасибо!</div>
+    <div class="line1 font_32" style="display: none" id="field_sent_email">Ваш чек отправлен на E-mail</div>
+    <div class="line1 font_32" style="display: none" id="field_sent_sms">Ваш чек отправлен в SMS</div>
+    <div style="display: flex">
+      <div class="recept_block" id="ticket" style="display: none">
+        <div class="font_40">Электронный чек</div>
+        <div class="check_qr" id="check_qr"></div>
+      </div>
+      <div class="recept_block" id="tips" style="display: none">
+        <div class="font_40">Оставить чаевые</div>
+        <div class="check_qr" id="tips_qr"></div>
+      </div>
+    </div>
+    <div class="line1 font_32" id="field_ticket">НЕ ЗАБУДЬТЕ ПЕРЕДАТЬ КВИТАНЦИЮ МАСТЕРУ</div>
+  </div>
+  <div class="recept-footer">
+    <button class="thumb1" onclick="printCopy();" id="check_print" style="display: none;"><div class="thumb1text font_30 gtv">Напечатать чек?</div></button>
+    <button class="thumb1" onclick="next();" id="btn_next"><div class="thumb1text gtv">Закрыть</div></button>
+  </div>
+</div>
+</body>
+</html>

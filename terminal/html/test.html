@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Service mode</title>
+
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="css/modal-win.css" />
+<script src="js/test.js"></script>
+<script src="js/dispatcher.js"></script>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/jquery.overlay.js"></script>
+
+
+<style>
+	body {
+    	font: 12pt Arial, Helvetica, sans-serif; /* Шрифт на веб-странице */
+		color: #1c4682;
+   }
+</style>
+
+</head>
+<body onLoad="DispatcherWebSocket();">
+	<table width="100%">
+		<tr>
+			<td align="left">
+				<h1>
+					Сервисный режим <span id="version"></span><br>
+					<span id="terminal" class="font_24"></span>
+				</h1>
+			</td>
+			<td align="right">
+				<div class="service_menu_bar">
+					<button class="service_menu_btn" onclick="if (confirm('Вы действительно хотите обновить ПО на терминале? Обновление может занять некоторое время и приведет к необходимости перезагрузки терминала...')) {checkUpdate(); $.overlay.show();}">Обновить ПО</button>
+					<button class="service_menu_btn" onclick="if (confirm('Вы действительно хотите перезагрузить терминал?')) reboot();">Перезагрузка терминала</button>
+					<button class="service_menu_btn" onclick="document.location.href = 'index.html';">ВЫХОД</button>
+				</div>
+			</td>
+		</tr>
+	</table>
+	
+	
+	<form>
+	
+	<table width="100%" style="padding: 20px;">
+	<tr>
+		<td colspan="3"> <h3>Купюроприемник</h3> </td>
+	</tr>
+	<tr>
+		<td valign="top" width="33%" class="grid">
+			<input type="button" class="btn_smode" id="cashmachine_payouts_btn" onclick="getPayoutsVolume();" value="Обновить данные"/><br/><br/>
+			<input type="button" class="btn_smode green" onclick="setCashmachineEnabled(true,false);" value="Начать прием банкнот"/><br/><br/>
+			<input type="button" class="btn_smode red" onclick="setCashmachineEnabled(false,false);" value="Завершить прием банкнот"/><br/><br/>
+			<!--<input type="button" class="big_button" onclick="stackingBanknote();" value="Принять банкноту"/>
+			<input type="button" class="big_button" onclick="returnBanknote();" value="Вернуть банкноту"/><br/><br/>-->
+			<input type="button" class="btn_smode" id="cashmachine_empty_btn" onclick="if (confirm('Вы действительно хотите опустошить сдачу?')) emptyCashmachine();" value="Опустошить купюроприемник"/><br/><br/>
+			
+			<p id="cm_info" class="log_info">&nbsp;</p>
+		</td>
+		<td valign="top" align="center" width="33%">
+			<div id="nominals_table">
+				<table cellpadding='7' border="1" style="border: 1px solid black; border-collapse: collapse;" >
+					<tr><td align='center'>Номинал</td><td align='center'>Количество на сдачу</td></tr>
+					<tr><td>5000</td><td align='center'>0</td></tr>
+					<tr><td>1000</td><td align='center'>0</td></tr>
+					<tr><td>2000</td><td align='center'>0</td></tr>
+					<tr><td>500</td><td align='center'>0</td></tr>
+					<tr><td>200</td><td align='center'>0</td></tr>
+					<tr><td>100</td><td align='center'>0</td></tr>
+					<tr><td>50</td><td align='center'>0</td></tr>
+				</table>
+			</div>
+		</td>
+		<td valign="top" width="33%">
+			<div>
+				<span>Всего в терминале: </span><span id="common_summ">0</span> руб <br/><br/>
+				<span>В кассете: </span><span id="stacker_summ">0</span> руб
+			</div>
+		</td>
+		
+	</tr>
+<!-- >	Выдать сумму: <input class="big_button" type="text" id="amount" value="100"/>
+ 	<input type="button" class="big_button" onclick="payoutSumm(document.getElementById('amount').value);" value="Выдать"/><br/><br/>-->
+	</table>
+
+	<table width="100%" style="padding: 20px;">
+		<tr>
+			<td width="50%"><h3>Фискальный регистратор</h3></td>
+			<td width="50%"><h3>POS терминал</h3></td>
+		</tr>
+		<tr>
+			<td valign="top">
+				<input type="button" class="btn_smode" onclick="frGetState();" value="Считать состояние ФР"/>
+				<input type="button" class="btn_smode green" onclick="frPrintXReport();" value="Снять X-отчет"/>
+				<br/><br/>
+				<input type="button" class="btn_smode" onclick="frContinuePrint();" value="Продолжение печати"/>
+				<input type="button" class="btn_smode red" onclick="frPrintZReport();" value="Закрыть смену"/>
+				<br/><br/>
+				<!-- 	<input type="button" class="big_button" onclick="printCheck();" value="Напечатать тестовый чек"/>-->
+				<input type="button" class="btn_smode red" onclick="frCancelCheck();" value="Отменить чек"/>
+				<input type="button" class="btn_smode red" onclick="frResetDevice();$.overlay.show();" value="Перезагрузить кассу"/>
+
+
+				<p id="fr_info" class="log_info">&nbsp;</p>
+			</td>
+			<td valign="top" colspan="2">
+				<input type="button" class="btn_smode" onclick="posCheck();" value="Проверка соединения"/><br/><br/>
+				<input type="button" class="btn_smode green" onclick="posCheckResults();" value="Сверка итогов"/>
+
+				<p id="pos_info" class="log_info">&nbsp;</p>
+			</td>
+		</tr>
+	</table>
+	
+	</form>
+
+    <div class="overlay"></div>
+</body>
+</html>

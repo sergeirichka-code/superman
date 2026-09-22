@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MainSU</title>
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/home-v3.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="css/modal-win.css">
+
+<script src="../src/resources/services.cfg"></script>
+<script src="../dist/services.cfg"></script>
+<script src="../src/resources/market.cfg"></script>
+<script src="../dist/market.cfg"></script>
+<script type="text/javascript" src="js/dispatcher.js"></script>
+<script type="text/javascript" src="js/configuration.js"></script>
+<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="js/modal-win.js"></script>
+<script type="text/javascript" src="js/pinger.js"></script>
+
+<script>
+  var nextUrl = "client_phone.html";
+  var serviceDescriptions = {
+    a: {
+      eyebrow: "МАШИНКОЙ",
+      description: "Короткая стрижка машинкой, без перехода",
+      image: "images/service-clipper.png"
+    },
+    e: {
+      eyebrow: "С ПЕРЕХОДОМ",
+      description: "Полноценная стрижка с переходом, форма по желанию",
+      image: "images/service-haircut.png"
+    }
+  };
+
+  function initView() {
+    initBtn('haircut', 'a');
+    initBtn('haircut', 'e');
+
+  }
+
+  function next(params) {
+    document.location.href = nextUrl + "?type=haircut&code=" + params;
+  }
+
+  function init(info) {
+    setCashmachineEnabled(false, true);
+    pinger(info.options);
+  }
+
+  function refreshSettings() {
+    window.location.reload();
+  }
+
+  function openService(code) {
+    var service = getService('haircut', code);
+    if (!service || !isServiceEnabled(service)) return;
+    next(code);
+  }
+
+  function handleStaffShiftOperation(result) {
+    let messageText = '';
+
+    if (result.text == 'shift_opened') {
+      messageText = "Смена открыта";
+      setTimeout('closeModal()', 1000);
+    }
+    else if (result.text == 'shift_already_opened')
+      messageText = "Смена уже открыта";
+    else if (result.text == 'shift_closed') {
+      messageText = "Смена закрыта";
+      setTimeout('closeModal()', 1000);
+    }
+    else if (result.text == 'shift_already_closed')
+      messageText = "Смена уже закрыта";
+    else if (result.text == 'pin_not_found')
+      messageText = "Введен не верный код";
+    else
+      messageText = "Что то пошло не так, попробуйте позже";
+
+    clearStaffOpResultMsg();
+    $("#staff_op_result_msg").append(messageText);
+    setTimeout('clearStaffOpResultMsg()', 2000);
+  }
+
+  function clearStaffOpResultMsg() {
+    $("#staff_op_result_msg").empty();
+  }
+</script>
+</head>
+
+<body class="home-v3" onload="initView(); DispatcherWebSocket();">
+  <main class="terminal-app">
+    <header class="terminal-header">
+      <button class="brand-button" ondblclick="openModal('#staff_pin_dialog');" aria-label="СУПЕРМЕН">
+        <img src="images/logo-v2.png" alt="СУПЕРМЕН — мужские стрижки">
+      </button>
+
+      <nav class="header-actions" aria-label="Разделы">
+        <button class="header-action" onclick='document.location.href = "extras.html";'>
+          <span class="header-action-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10"/><path d="M16 10v12M10 16h12"/></svg>
+          </span>
+          <span>Доп. услуги</span>
+        </button>
+        <button class="header-action" onclick='document.location.href = "actions.html";'>
+          <span class="header-action-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32"><path d="M5 8v8l11 11 11-11L16 5H8a3 3 0 0 0-3 3Z"/><circle cx="11" cy="11" r="2.2"/></svg>
+          </span>
+          <span>Акции</span>
+        </button>
+
+      </nav>
+    </header>
+
+    <section class="services-surface">
+      <div class="surface-decor" aria-hidden="true">
+        <img class="surface-decor-dots" src="images/decor-dot-circle.png" alt="">
+        <img class="surface-decor-red" src="images/decor-red-shape.svg" alt="">
+        <img class="surface-decor-comb" src="images/decor-comb.png" alt="">
+        <img class="surface-decor-stripes" src="images/decor-stripes-red.png" alt="">
+      </div>
+      <div class="services-heading">
+        <div>
+          <h1>УСЛУГИ</h1>
+          <p>Выбери вариант стрижки</p>
+        </div>
+        <div class="heading-art" aria-hidden="true">
+          <img class="heading-comb" src="images/decor-comb.png" alt="">
+          <img class="heading-stripes-img" src="images/decor-stripes-blue.png" alt="">
+        </div>
+      </div>
+
+      <div class="service-grid">
+        <button class="service-card" id="haircut_a" onclick='openService("a")'>
+          <div class="service-image-wrap">
+            <span class="service-badge blue">МАШИНКОЙ</span>
+            <span class="decor-dots"></span>
+            <img src="images/service-clipper.png" alt="Под насадку">
+          </div>
+          <div class="service-card-body">
+            <div class="service-copy">
+              <h2 id="haircut_a_name"></h2>
+              <p>Машинкой, без перехода</p>
+            </div>
+            <div class="service-card-hint">КОРОТКАЯ РАВНОМЕРНАЯ ДЛИНА</div>
+            <div class="service-meta">
+              <span class="service-select-label">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
+                Выбрать
+              </span>
+              <strong><span id="haircut_a_cost">0</span> <span class="rub">₽</span></strong>
+            </div>
+            <span class="card-arrow">›</span>
+          </div>
+        </button>
+
+        <button class="service-card" id="haircut_e" onclick='openService("e")'>
+          <div class="service-image-wrap">
+            <span class="service-badge red">С ПЕРЕХОДОМ</span>
+            <span class="corner-stripes"></span>
+            <img src="images/service-haircut.png" alt="Стрижка">
+          </div>
+          <div class="service-card-body">
+            <div class="service-copy">
+              <h2 id="haircut_e_name"></h2>
+              <p>Любая форма, с переходом</p>
+            </div>
+            <div class="service-card-hint">ФОРМУ ОБСУДИ С МАСТЕРОМ</div>
+            <div class="service-meta">
+              <span class="service-select-label">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
+                Выбрать
+              </span>
+              <strong><span id="haircut_e_cost">0</span> <span class="rub">₽</span></strong>
+            </div>
+            <span class="card-arrow">›</span>
+          </div>
+        </button>
+      </div>    </section>
+  </main>
+
+  <!-- Служебное окно из старой CRM сохранено без изменения механики -->
+  <div id="boxes">
+    <div id="staff_pin_dialog" class="window">
+      <div class="font_32 dialog_text_box">Введите pin:</div>
+      <table width="100%">
+        <tr>
+          <td align="center">
+            <input id="passw" class="login_input_field" type="password"><br>
+            <table>
+              <tr>
+                <td><button onclick="addNum('1', 'passw');" class="num_pad_button">1</button></td>
+                <td><button onclick="addNum('2', 'passw');" class="num_pad_button">2</button></td>
+                <td><button onclick="addNum('3', 'passw');" class="num_pad_button">3</button></td>
+              </tr>
+              <tr>
+                <td><button onclick="addNum('4', 'passw');" class="num_pad_button">4</button></td>
+                <td><button onclick="addNum('5', 'passw');" class="num_pad_button">5</button></td>
+                <td><button onclick="addNum('6', 'passw');" class="num_pad_button">6</button></td>
+              </tr>
+              <tr>
+                <td><button onclick="addNum('7', 'passw');" class="num_pad_button">7</button></td>
+                <td><button onclick="addNum('8', 'passw');" class="num_pad_button">8</button></td>
+                <td><button onclick="addNum('9', 'passw');" class="num_pad_button">9</button></td>
+              </tr>
+              <tr>
+                <td><button onclick="addNum('0', 'passw');" class="num_pad_button">0</button></td>
+                <td colspan="2"><button onclick="delNum('passw');" class="clear_pad_button">стереть</button></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr><td colspan="3"><div id="staff_op_result_msg"></div></td></tr>
+        <tr>
+          <td>
+            <button class="staff_modal_button" onclick="staffShiftOperation($('#passw').val(), 'shift_open');">открыть смену</button>
+            <button class="staff_modal_button" onclick="staffShiftOperation($('#passw').val(), 'shift_close');">закрыть смену</button>
+            <button class="staff_modal_button" onclick="closeModal();">отмена</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="mask"></div>
+  </div>
+</body>
+</html>

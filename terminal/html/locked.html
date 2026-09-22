@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="ru-ru" dir="ltr" xml:lang="ru-ru" xmlns="http://www.w3.org/1999/xhtml" slick-uniqueid="3">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lock page</title>
+<link href="css/style.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="js/dispatcher.js"></script>
+
+  <script>
+  
+  	function init(eventObj) {
+
+      if (eventObj == null || eventObj.isLocked) {
+          setTimeout('DispatcherWebSocket();', 10000);
+      } else {
+        document.location.href = "index.html";
+      }
+	}
+  </script>
+  
+</head>
+<body onload="init(null);">
+<!-- Main Container -->
+<div class="logo"></div>
+<div class="container"> 
+  <!-- Stats Gallery Section -->
+  <div class="line1 font_32 red">
+    ПРИНОСИМ СВОИ ИЗВИНЕНИЯ, ТЕРМИНАЛ ВРЕМЕННО ЗАБЛОКИРОВАН!
+  </div>
+</div>
+<!-- Main Container Ends -->
+</body>
+</html>

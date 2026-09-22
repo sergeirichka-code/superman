@@ -1,0 +1,475 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="ru-ru" dir="ltr" xml:lang="ru-ru" xmlns="http://www.w3.org/1999/xhtml" slick-uniqueid="3">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Market</title>
+
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/market.css" />
+<link rel="stylesheet" type="text/css" href="css/modal-win.css" />
+
+<script src="../src/resources/market.cfg"></script>
+<script src="../dist/market.cfg"></script>
+<script type="text/javascript" src="js/dispatcher.js"></script>
+<script type="text/javascript" src="js/configuration.js"></script>
+<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="js/qrcode.js"></script>
+<script type="text/javascript" src="js/modal-win.js"></script>
+
+<script>
+
+var commonCost = 0;
+var CURRENT_BANKNOTE;
+var POST;
+var NUMBER;
+let personDataConsent;
+var productsMap = {};
+var selectedElts = {};
+var codes = ['shampoo', 'styling', 'shaving', 'other'];
+var filterSelected = [];
+
+var POS_IS_WORKING = false;
+var SBP_IS_WORKING = false;
+
+function initPage() {
+	var param = getReqParams();
+	POST = param['post'];
+	NUMBER = param['number'];
+	personDataConsent = param['personDataConsent'];
+
+	for (var i=0; i < codes.length; i++) {
+		initSection(codes[i]);
+	}
+
+	document.getElementById('paymentCost').innerHTML = commonCost;
+}
+
+function refreshVisibleProducts() {
+
+	for (var i=0; i < codes.length; i++) {
+
+		var objs = market[codes[i]];
+		for (var j = 0; j < objs.length; j++) {
+			var obj = objs[j];
+			var id = codes[i] + "_" + obj.code;
+
+			if (obj.type == null || filterSelected.length == 0 || filterSelected.indexOf(obj.type) != -1) {
+				$("#cell_" + id).show();
+			} else {
+				$("#cell_" + id).hide();
+			}
+		}
+	}
+}
+
+function applyFilter(type) {
+
+	var isSelected = $('#' + type).hasClass("selected");
+
+	if (isSelected) {
+		$('#' + type).removeClass("selected");
+		filterSelected.splice(filterSelected.indexOf(type), 1);
+	}
+	else {
+		$('.market_filter_btn').removeClass("selected");
+		$('#' + type).addClass("selected");
+		filterSelected = [type];
+	}
+
+	refreshVisibleProducts();
+}
+
+function initSection(type) {
+
+	var container = "#block_" + type;
+	var menu = "#menu_" + type;
+
+	var objs = market[type];
+
+	if (objs) {
+		$(menu).show();
+
+		for (var i = 0; i < objs.length; i++) {
+			var obj = objs[i];
+			initProduct(type, obj);
+			productsMap[type + "_" + obj.code] = obj;
+		}
+	} else {
+		console.log("hide" + menu)
+		$(menu).hide();
+	}
+}
+
+function initProduct(type, obj) {
+	var container = "#block_" + type;
+	var id = type + "_" + obj.code;
+
+	$(container).append("<div class='market_cell " + id + "' id='cell_" + id + "'>");
+	$('#cell_' + id).append("<div class='market_label' id='market_name_" + id + "'>" + obj.name + "</div>");
+	$('#cell_' + id).append("<div class='market_cost'><span>" + obj.cost + "</span><span class='currency'>q</span></div>");
+	$('#cell_' + id).append("<div class='market_controls'><button class='market_btn market_btn_minus' onclick=\"changeCount('" + id + "', -1);\">-</button><div class='market_numbox' id='market_" + id + "_count'>0</div><button class='market_btn' onclick=\"changeCount('" + id + "', +1);\">+</button></div>");
+}
+
+function selectMenuItem(code) {
+
+	for (var i=0; i < codes.length; i++) {
+		document.getElementById('menu_' + codes[i]).className = "block_menu";
+		document.getElementById('block_' + codes[i]).className = "market_block hidden";
+	}
+
+	document.getElementById('menu_' + code).className = "block_menu selected";
+	document.getElementById('block_' + code).className = "market_block";
+}
+
+
+function init(eventObj) {
+	posCheck();
+	sbpCheck();
+}
+
+function changeCount(code, delta) {
+
+	var elt = document.getElementById('market_' + code + "_count");
+	var count = parseInt(elt.innerHTML);
+	count += delta;
+
+	if (count < 0) {
+		count = 0;
+	} else if (count > 9) {
+		count = 9;
+	}
+
+	elt.innerHTML = count;
+	selectedElts[code] = count;
+
+	commonCost = 0;
+	for(var key in selectedElts) {
+		if (selectedElts[key] != null && selectedElts[key] > 0) {
+			commonCost += productsMap[key].cost * selectedElts[key];
+		}
+	}
+
+	document.getElementById('paymentCost').innerHTML = commonCost;
+
+	if (count > 0) {
+		$('#cell_' + code).addClass("selected");
+		$('#market_name_' + code).addClass("selected");
+	}
+	else {
+		$('#cell_' + code).removeClass("selected");
+		$('#market_name_' + code).removeClass("selected");
+	}
+
+	refreshPayButtons();
+}
+
+function refreshPayButtons() {
+	if (commonCost > 0) {
+		setCashmachineEnabled(true, true);
+		$("#btn_by_card").prop('disabled', !POS_IS_WORKING);
+		$("#btn_by_sbp").prop('disabled', !SBP_IS_WORKING);
+	} else {
+		setCashmachineEnabled(false, true);
+		$("#btn_by_card").prop('disabled', true);
+		$("#btn_by_sbp").prop('disabled', true);
+	}
+}
+
+/* Payment */
+
+function handleCashmachineEvent(eventType, eventValue) {
+	
+	if (eventType == "escrow") {
+		var balance = parseInt(document.getElementById('paymentSumm').innerHTML);
+		CURRENT_BANKNOTE = eventValue / 100;
+		
+		if (balance + CURRENT_BANKNOTE <= commonCost)
+			stacking();
+		else
+			checkSummChange(balance + CURRENT_BANKNOTE, commonCost);
+	} else if (eventType == "banknote") {
+		var balance = parseInt(document.getElementById('paymentSumm').innerHTML);
+		balance += (eventValue / 100);
+		document.getElementById('paymentSumm').innerHTML = balance;
+		
+		if (balance >= commonCost) {
+			setCashmachineEnabled(false, true);
+			document.getElementById("btn_pay").disabled = "";
+			
+			if (balance > commonCost) {
+				document.getElementById('paymentChange').innerHTML = balance - commonCost;
+			}
+		}
+		document.getElementById("btn_back").disabled = "true";
+		document.getElementById("btn_by_card").disabled = "true";
+	}
+	else if (eventType == "error") {
+		//setCashmachineEnabled(false);
+	}
+}
+
+function stacking() {
+	$('.market_btn').prop('disabled', true);
+
+	$("#btn_back").prop('disabled', true);
+	$("#btn_by_card").prop('disabled', true);
+	$("#btn_by_sbp").prop('disabled', true);
+	$("#btn_pay").prop('disabled', true);
+
+	stackingBanknote();
+}
+
+function handleCheckSummChange(result) {
+	if (result) {
+		stacking();
+	}
+	else {
+		openModal('#dialog');
+	}
+}
+
+function formPaymentParams() {
+
+	var params = "";
+
+	for(var key in selectedElts) {
+		if (selectedElts[key] != null && selectedElts[key] > 0) {
+			if (params.length > 0) {
+				params += "|";
+			}
+			params += productsMap[key].name + ";" + productsMap[key].cost + ";" + selectedElts[key] + ";market;" + productsMap[key].code + ";" + productsMap[key].id + ";" + POST + ";";
+		}
+	}
+
+	return params;
+}
+
+function pay() {
+	setCashmachineEnabled(false, true);
+	document.getElementById("btn_pay").disabled = "true";
+	
+	var balance = document.getElementById('paymentSumm').innerHTML;
+	var params = formPaymentParams();
+	
+	payCmd(commonCost, balance, params, NUMBER, null, false, false, null, 1, POST, 'market', null, null, commonCost, null, personDataConsent);
+}
+
+function handlePayCmd(result, message, dispensed, change, terminalId, transactionId, checkSentToEmail) {
+	
+	if (result == "ok") {
+		document.location.href = "ticket.html?check=" + encodeURIComponent(message) + "&transactionId=" + transactionId + "&checkSentToEmail=" + checkSentToEmail;
+	}
+	else {
+		closeModal();
+		setCashmachineEnabled(true, true);
+	}
+}
+
+
+
+// Pay by card
+
+function handlePosCheck(isWorking, dateTime) {
+	POS_IS_WORKING = isWorking;
+	refreshPayButtons();
+}
+
+function payByCard() {
+	
+	if (commonCost > 0) {
+	
+		openModal('#pay_by_card_dialog');
+		
+		checkTimer();
+		
+		document.getElementById('by_card_cost').innerHTML = commonCost;
+		setCashmachineEnabled(false, true);
+	
+		var balance = commonCost;
+		var params = formPaymentParams();
+
+		payCmd(commonCost, balance, params, NUMBER, null, false, false, null, 2, POST, 'market', null, null, commonCost, null, personDataConsent);
+	}
+}
+
+// SBP
+
+function payBySbp() {
+
+	$("#btn_pay").prop('disabled', true);
+	setCashmachineEnabled(false, true);
+	sbpPayment(commonCost * 100);
+}
+
+function sbpDialogCancel() {
+	closeModal();
+	sbpCancel();
+	$("#btn_by_sbp").prop('disabled', !SBP_IS_WORKING);
+	setCashmachineEnabled(true, true);
+}
+
+function handleSbpResponse(result) {
+
+	if (result.cmd == 'check') {
+		SBP_IS_WORKING = result.result == 'ok';
+		refreshPayButtons();
+	} else if (result.cmd == 'payment') {
+		if (result.text) {
+			document.getElementById('by_sbp_cost').innerHTML = commonCost;
+			openModal('#pay_by_sbp_dialog');
+
+			$("#sbp_qr").empty();
+
+			new QRCode('sbp_qr', {
+				text: result.text,
+				width: 200,
+				height: 200,
+				colorDark : "#000000",
+				colorLight : "#f1f1f1",
+				correctLevel : QRCode.CorrectLevel.H
+			});
+		} else {
+			setCashmachineEnabled(true, true);
+			$("#btn_by_sbp").prop('disabled', !SBP_IS_WORKING);
+		}
+	} else if (result.cmd == 'event_payment_ok') {
+
+		var params = formPaymentParams();
+
+		payCmd(commonCost, commonCost, params, NUMBER, null, false, false, null, 3, POST, 'market', null, null, commonCost, null, personDataConsent);
+	}
+}
+
+var timer = 120000;
+
+function checkTimer() {
+	timer = timer - 1000;
+
+	if (timer <= 0) {
+		closeModal();
+	}
+	
+	setTimeout('checkTimer();', 1000);
+}
+
+</script>
+
+</head>
+
+
+<body onload="initPage(); DispatcherWebSocket();">
+<div class="logo_market"></div>
+<!-- Main Container -->
+<div class="container"> 
+  <!-- Stats Gallery Section -->
+	<div class="center1">
+		<div class="market_filter">
+			<div id="Estel" onclick="applyFilter('Estel');" class="market_filter_btn">Estel</div>
+			<div id="Tefia" onclick="applyFilter('Tefia');" class="market_filter_btn">Tefia</div>
+<!--			<div id="WhiteCosmetics" onclick="applyFilter('WhiteCosmetics');" class="market_filter_btn">White Cosmetics</div>-->
+		</div>
+	</div>
+
+	<div class="market_content">
+		<div class="block_menu_container">
+			<div class="block_menu selected" id="menu_shampoo" onclick="selectMenuItem('shampoo')">
+				<div class="market_icon market-shampoo"></div>
+				<div class="block_menu_label">Шампуни и Уход</div>
+			</div>
+			<div class="block_menu" id="menu_styling" onclick="selectMenuItem('styling')">
+				<div class="market_icon market-hair-gel"></div>
+				<div class="block_menu_label">Стайлинг</div>
+			</div>
+			<div class="block_menu" id="menu_shaving" onclick="selectMenuItem('shaving')">
+				<div class="market_icon market-shaving"></div>
+				<div class="block_menu_label">Бритье и уход</div>
+			</div>
+			<div class="block_menu" id="menu_other" onclick="selectMenuItem('other')" hidden>
+				<div class="market_icon market-other"></div>
+				<div class="block_menu_label">Прочее</div>
+			</div>
+
+<!--			<button onclick="handleCashmachineEvent('escrow', 10000);">+100e</button>-->
+<!--			<button onclick="handleCashmachineEvent('banknote', 10000);">+100s</button>-->
+		</div>
+
+		<div class="market_block" id="block_shampoo"></div>
+		<div class="market_block hidden" id="block_styling"></div>
+		<div class="market_block hidden" id="block_shaving"></div>
+		<div class="market_block hidden" id="block_other"></div>
+
+	</div>
+
+  <div class="footer1">
+    <div class="footersum market_sum">
+      <stitog1>К ОПЛАТЕ:&nbsp;&nbsp;<stsum1 id="paymentCost">0</stsum1><span class="currency">q</span></stitog1>
+    </div>  
+    <div class="footersum market_sum">
+      <stitog1>ВНЕСЕНО:&nbsp;&nbsp;<stsum1 id="paymentSumm">0</stsum1><span class="currency">q</span></stitog1>
+    </div>
+    <div class="footersum market_sum">
+      <stitog1>СДАЧА:&nbsp;&nbsp;<stsum1 id="paymentChange">0</stsum1><span class="currency">q</span></stitog1>
+    </div>
+  </div>
+  <div class="line_buttons">
+    <button class="thumb1 payment_market" id="btn_back" onclick="document.location.href = 'index.html';" class="footer_back" /><div class="thumb1text opl font_30">НАЗАД</div>
+    <button class="thumb1 payment_market pay_by_card" disabled="true" id="btn_by_card" onclick="payByCard();"><div class="thumb1text opl font_30">КАРТОЙ</div></button>
+    <button class="thumb1 payment_market pay_by_sbp" disabled="true" id="btn_by_sbp" onclick="payBySbp();"><div class="thumb1text opl font_30 ">СБП</div></button>
+    <button class="thumb1 payment_market" id="btn_pay" disabled="true" onclick="pay();" class="footer_opl" /><div class="thumb1text opl font_30">ОПЛАТИТЬ</div>
+  </div>
+</div>
+<!-- Main Container Ends -->
+
+
+<!-- modal window -->
+<div id="boxes">
+
+	<!-- not have a change dialog -->
+	<div id="dialog" class="window">
+
+		<div class="logo"></div>
+		<div class="font_100 dialog_text_box red">ВНИМАНИЕ!</div>
+
+		<div class="font_32 dialog_text_box">В ТЕРМИНАЛЕ НЕДОСТАТОЧНО СРЕДСТВ <br/>ДЛЯ ВЫДАЧИ СДАЧИ</div>
+
+		<div class="font_32 dialog_text_box">ВЕРНУТЬ ПОСЛЕДНЮЮ ВСТАВЛЕННУЮ БАНКНОТУ <br/>ИЛИ ОПЛАТИТЬ БЕЗ СДАЧИ?</div>
+
+		<div class="dialog_footer">
+			<a><button class="modal_button" onclick="returnBanknote();closeModal();">Вернуть банкноту</button></a>
+			<a><button class="modal_button" onclick="stacking();closeModal();">Оплатить без сдачи</button></a>
+		</div>
+	</div>
+
+
+	<!-- pay by card dialog -->
+	<div id="pay_by_card_dialog" class="window">
+		<div class="logo"></div>
+		<div class="font_32 dialog_text_box">ОПЛАТА КАРТОЙ</div>
+		<div class="font_16 dialog_text_box">К ОПЛАТЕ</div>
+		<div class="font_100 red"><txt id="by_card_cost">0</txt><span class="currency">q</span></div>
+		<div class="font_32 dialog_text_box">СЛЕДУЙТЕ ИНСТРУКЦИЯМ <br/>НА БАНКОВСКОМ ТЕРМИНАЛЕ </div>
+		<div class="font_16 dialog_footer">ДЛЯ ОТМЕНЫ НАЖМИТЕ КНОПКУ ОТМЕНА <br/>НА БАНКОВСКОМ ТЕРМИНАЛЕ</div>
+	</div>
+
+	<!-- pay by sbp dialog -->
+	<div id="pay_by_sbp_dialog" class="window">
+		<div class="logo"></div>
+		<div class="font_32 dialog_text_box">ОПЛАТА ЧЕРЕЗ</div>
+		<div class="font_32 dialog_text_box">СИСТЕМУ БЫСТРЫХ ПЛАТЕЖЕЙ</div>
+		<div class="dialog_text_box">
+			<div class="qr-container"><div id="sbp_qr"></div></div>
+		</div>
+		<div class="font_48 red"><txt id="by_sbp_cost">0</txt><span class="currency">q</span></div>
+		<div class="font_16 dialog_footer"><a><button class="modal_button" id="sbp_close" onclick="sbpDialogCancel();">отмена</button></a></div>
+	</div>
+
+	<div id="mask"></div>
+</div>
+
+
+</body>
+</html>

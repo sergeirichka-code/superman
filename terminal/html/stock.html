@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="ru-ru" dir="ltr" xml:lang="ru-ru" xmlns="http://www.w3.org/1999/xhtml" slick-uniqueid="3">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stock</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/dispatcher.js"></script>
+    <script type="text/javascript" src="js/pinger.js"></script>
+
+    <script>
+        var nextUrl = "voting.html";
+        var paramArr;
+        var number = '';
+        var bonus;
+        var OPTIONS;
+        var STOCK_COUNT;
+        var IS_STOCK = false;
+
+        function initPage() {
+
+            let params = location.search;
+            paramArr = getReqParams();
+
+            if (paramArr['number'] != null && paramArr['number'] != '') {
+                number = paramArr['number'];
+            }
+
+            if (paramArr['bonus'] != null) {
+                bonus = paramArr['bonus'];
+                $('#field_bonus_count').append(bonus);
+            } else {
+                $('#field_bonus').empty();
+            }
+        }
+
+        function init(info) {
+
+            OPTIONS = info.options;
+
+            STOCK_COUNT = OPTIONS['stock_count'] != null ? OPTIONS['stock_count'] : 6;
+
+            $('#field_stock_count').append(STOCK_COUNT);
+            $('#field_left_2').append((STOCK_COUNT - 1) + " ПОСЕЩЕНИй");
+
+            if (OPTIONS['clientBonus'] == 'true') {
+                $("#btn_next_bonus").prop('disabled', false);
+                $("#bonus_system_comment").show();
+            } else {
+                $("#btn_next_bonus").prop('disabled', true);
+                $("#btn_next_bonus").empty();
+                $("#bonus_system_comment").hide();
+            }
+
+            if (number != '') {
+                reqClientInfo(number);
+            }
+
+            pinger(info.options);
+        }
+
+        function handleReqClientInfo(info) {
+
+            if (info != null) {
+
+                var count = parseInt(info.counter) + 1;
+                if (info.action != null) {
+                    STOCK_COUNT = parseInt(info.action);
+                    $('#field_stock_count').empty();
+                    $('#field_stock_count').append(STOCK_COUNT);
+                }
+
+                var leftCount = STOCK_COUNT - count;
+
+                var container = "#stock_boxes";
+                $(container).empty();
+
+                for(var i = 1; i <= STOCK_COUNT; i++) {
+
+                    $(container).append("<div class='chbox' id='cell_" + i + "'></div>");
+
+                    if (i <= count && i != STOCK_COUNT) {
+                        $('#cell_' + i).addClass('chek')
+                    } else if (i == STOCK_COUNT) {
+                        if (leftCount == 0)
+                            $('#cell_' + i).addClass('stock_red')
+                        else
+                            $('#cell_' + i).addClass('stock')
+                    } else {
+                        $('#cell_' + i).addClass('box')
+                    }
+                }
+
+                var width = 1148 / (parseInt(STOCK_COUNT) + 1);
+
+                $('.chbox').width(width);
+                $('.chbox').height(width);
+
+                $('#field_counter').empty();
+                $('#field_counter').append(count);
+
+                if (info.limit > 0) {
+                    $('#field_stock_limit').empty();
+                }
+
+                if (leftCount > 1) {
+
+                    var str = '' + leftCount;
+                    if (leftCount >= 5) {
+                        str += " ПОСЕЩЕНИЙ";
+                    } else if (leftCount == 1) {
+                        str += " ПОСЕЩЕНИЕ";
+                    } else {
+                        str += " ПОСЕЩЕНИЯ";
+                    }
+
+                    document.getElementById('field_left_2').innerHTML = str;
+                } else if (leftCount == 1) {
+                    document.getElementById('field_left_1').innerHTML = "СЛЕДУЮЩАЯ <br/>ВАША СТРИЖКА БУДЕТ: ";
+                    document.getElementById('field_left_2').innerHTML = "БЕСПЛАТНО";
+                } else {
+                    document.getElementById('field_left_1').innerHTML = "СЕГОДНЯ <br/>ВАША СТРИЖКА: ";
+                    document.getElementById('field_left_2').innerHTML = "БЕСПЛАТНО";
+
+                    IS_STOCK = true;
+
+                    $("#btn_next_stock_text").empty();
+                    $("#btn_next_stock_text").append("Бесплатная стрижка")
+                }
+            }
+
+            if (OPTIONS != null && OPTIONS['from_where'] == 'true' && info != null && info.isNew == 'true') {
+                nextUrl = 'from_where.html';
+            }
+
+            $("#btn_next_stock").prop('disabled', false);
+        }
+
+        function next(useBonus) {
+
+            if (!useBonus) {
+                if (IS_STOCK) {
+                    paramArr['stock'] = true;
+                }
+                paramArr['stock_system'] = true;
+            }
+            document.location.href = nextUrl + '?' + toReqParams(paramArr);
+        }
+
+        function back() {
+            document.location.href = "client_phone.html" + '?' + toReqParams(paramArr);
+        }
+
+    </script>
+
+</head>
+<body onload="initPage(); DispatcherWebSocket();">
+<div class="logo"></div>
+<div class="container">
+    <div class="tiket">
+        <st3>У ВАС <st3-1><span id="field_counter">1</span>-е</st3-1> ПОСЕЩЕНИЕ,
+            <span id="field_left_1">ДО БЕСПЛАТНОЙ <br/>СТРИЖКИ ОСТАЛОСЬ: </span><st3-1 id="field_left_2"></st3-1>
+        </st3>
+    </div>
+    <div id="stock_boxes"></div>
+    <div class="line3">
+        <st3 style="margin-bottom: 15px"><span id="field_stock_limit">КАЖДАЯ </span><span id="field_stock_count"></span>-я СТРИЖКА В ПОДАРОК!</st3>
+    </div>
+    <div class="line3">
+        <st3><span id="field_bonus">количество бонусов: </span><st3-1><span id="field_bonus_count"></span></st3-1></st3>
+    </div>
+    <div class="line3" style="height:53px;">
+        <st3 class="comment" style="display: none;" id="bonus_system_comment"><span id="field_bonus_attention">*Нажимая кнопку "копить бонусы", Вы отказываетесь <br>от накопления стрижек</st3>
+    </div>
+    <div class="stock_footer">
+        <button class="thumb1" onclick='back();'/><div class="thumb1text gtv">НАЗАД</div>
+        <button class="thumb1 stock" id="btn_next_bonus" onclick='next(true);' disabled="true"/><div class="thumb1text btn_font_32">Копить бонусы</div>
+        <button class="thumb1 stock" id="btn_next_stock" onclick='next(false);' disabled="true"/><div class="thumb1text btn_font_32" id="btn_next_stock_text">Копить стрижки</div>
+    </div>
+</div>
+</body>
+</html>

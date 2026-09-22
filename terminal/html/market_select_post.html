@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="ru-ru" dir="ltr" xml:lang="ru-ru" xmlns="http://www.w3.org/1999/xhtml" slick-uniqueid="3">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Market select post</title>
+
+<link href="css/style.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<script src="js/dispatcher.js"></script>
+<script type="text/javascript" src="js/pinger.js"></script>
+
+<script>
+
+var nextUrl = "market.html";
+var postsCount = 8;
+
+function init(info) {
+
+    if (info.options != null && info.options['posts_count'] != null) {
+        postsCount = parseInt(info.options['posts_count']);
+    }
+
+    staffPostsListRequest();
+
+    pinger(info.options);
+}
+
+function select_post(postNum) {
+    document.location.href = nextUrl + location.search + "&post=" + postNum;
+}
+
+function handleStaffPostsListRequest(result) {
+
+    if (result.result == "ok") {
+
+        if (result.postsList == null || result.postsList.length == 0) {
+            $("#btn_next").removeClass("hidden");
+        }
+
+        for (var i = 0; i < result.postsList.length; i++) {
+            $("#post_" + result.postsList[i]).prop('disabled', false);
+        }
+    } else {
+        for (var i = 1; i <= postsCount; i++) {
+            $("#post_" + i).prop('disabled', false);
+        }
+    }
+}
+	
+</script>
+
+</head>
+<body onload="DispatcherWebSocket();">
+<div class="logo"></div>
+<div class="container">
+   <div class="tiket">
+     <st3 class="red">ВЫБЕРИТЕ НОМЕР МАСТЕРА, У КОТОРОГО</st3>
+     <st3 class="red">ВЫ ОБСЛУЖИВАЛИСЬ</st3>
+   </div>
+   <div class="line1">
+        <button class="thumb1 pl1" id="post_1" onclick='select_post(1);' disabled="true"><div class="thumb1text">1</div></button>
+        <button class="thumb1 pl1" id="post_2" onclick='select_post(2);' disabled="true"><div class="thumb1text">2</div></button>
+        <button class="thumb1 pl1" id="post_3" onclick='select_post(3);' disabled="true"><div class="thumb1text">3</div></button>
+        <button class="thumb1 pl1" id="post_4" onclick='select_post(4);' disabled="true"><div class="thumb1text">4</div></button>
+   </div>
+   <div class="line1">
+        <button class="thumb1 pl1" id="post_5" onclick='select_post(5);' disabled="true"><div class="thumb1text">5</div></button>
+        <button class="thumb1 pl1" id="post_6" onclick='select_post(6);' disabled="true"><div class="thumb1text">6</div></button>
+        <button class="thumb1 pl1" id="post_7" onclick='select_post(7);' disabled="true"><div class="thumb1text">7</div></button>
+        <button class="thumb1 pl1" id="post_8" onclick='select_post(8);' disabled="true"><div class="thumb1text">8</div></button>
+    </div>
+
+    <div class="line1">
+        <button class="thumb1 vote_next_btn hidden" id="btn_next" onclick="document.location.href = 'index.html'"><div id="btn_next_label" class="thumb1text gtv">назад</div></button>
+    </div>
+</div>
+</body>
+</html>

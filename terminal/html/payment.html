@@ -1,0 +1,1049 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="ru-ru" dir="ltr" xml:lang="ru-ru" xmlns="http://www.w3.org/1999/xhtml" slick-uniqueid="3">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Payment</title>
+
+<link rel="stylesheet" type="text/css" href="css/modal-win.css" />
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/payment.css" rel="stylesheet" type="text/css">
+
+<script src="../src/resources/services.cfg"></script>
+<script src="../dist/services.cfg"></script>
+<script src="../src/resources/params.cfg"></script>
+<script src="../dist/params.cfg"></script>
+<script type="text/javascript" src="js/dispatcher.js"></script>
+<script type="text/javascript" src="js/configuration.js"></script>
+<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="js/qrcode.js"></script>
+<script type="text/javascript" src="js/modal-win.js"></script>
+<script type="text/javascript" src="js/client_bonus.js"></script>
+<script type="text/javascript" src="js/qrcode.js"></script>
+
+<script>
+var TYPE;
+var CODE;
+
+var selectedExtras = {};
+/* стоимость изначальной услуги, без учета всех скидок */
+var defCost = 0;
+/* стоимость изначальной услуги, с учетом скидок */
+var initialCost = 0;
+/* стоимость конечная суммарная со всеми допами и прочим */
+var commonCost = 0;
+
+var CURRENT_BANKNOTE;
+
+var NUMBER;
+var STOCK;
+var STOCK_SYSTEM;
+var VOTING;
+var FROM_WHERE;
+var POST;
+var CLIENT;
+let personDataConsent;
+let adminPinAction;
+
+var PROMO_CODE;
+var PROMO_CODE_AMOUNT;
+var PROMO_CODE_RULES;
+var PROMO_CODE_TYPE;
+var PROMO_CODE_DISCOUNT;
+var BONUS_DISCOUNT;
+var BONUS_USE = false;
+var SHOW_BONUS_INFO = false;
+
+var POS_IS_WORKING = false;
+var SBP_IS_WORKING = false;
+
+var IS_PAYOUT_ENABLED = true;
+var IS_FREE_WASH = false;
+
+function initPage() {
+	let param = getReqParams();
+	TYPE = param['type'];
+	CODE = param['code'];
+	
+	NUMBER = param['number'];
+	STOCK = param['stock'];
+	STOCK_SYSTEM = param['stock_system'];
+	VOTING = param['voting'];
+	FROM_WHERE = param['from_where'];
+	POST = param['post'];
+	personDataConsent = param['personDataConsent'];
+
+	initExtra('a');
+	initExtra('c');
+	initExtra('f');
+	initExtra('o');
+	initExtra('b');
+	initExtra('d');
+	initExtra('p');
+	initExtra('e');
+	initExtra('g');
+	initExtra('h');
+	initExtra('i');
+	initExtra('j');
+	initExtra('k');
+	initExtra('m');
+
+	var name = "";
+	var cost = 0;
+	var imgClass = "";
+	
+	if (TYPE != null && TYPE != '') {
+		imgClass = TYPE + "_" + CODE;
+		name = getService(TYPE, CODE).name;
+		cost = getService(TYPE, CODE).cost;
+
+		if (TYPE == "haircut") {
+			name = "СТРИЖКА «" + name + "»";
+		} else if (TYPE == "action") {
+			if (CODE != 'a' && CODE != 'b') {
+				document.getElementById('haircut_img').innerHTML = name;
+			}
+			if (CODE == 'b') {
+				cost = cost / 2;
+			}
+			name = "АКЦИЯ «" + name + "»";
+
+		} else if (TYPE == "extra") {
+			changeExtraCount(CODE, 1);
+
+			// если не стрижка то дизейблим Фейд
+			setExtraEnabled("i", false);
+		}
+	}
+
+	defCost = cost;
+
+	if (isStock()) {
+		cost = 0;
+	}
+
+	initialCost = cost;
+	commonCost = cost;
+
+	document.getElementById('positionName').innerHTML = name;
+	document.getElementById('paymentCost').innerHTML = commonCost;
+
+	$('#haircut_img').addClass(imgClass);
+}
+
+function initExtra(code) {
+	var obj = getService('extra', code);
+
+	if (obj == null) return;
+
+	var enabled = isServiceEnabled(obj);
+
+	var container = "#box_extra";
+	var id = obj.code;
+	var cost = formExtraCostLabel(obj, 0);
+
+	$(container).append("<button class='extra_cell' id='extra_cell_" + id + "'>");
+	$('#extra_cell_' + id).append("<div class='extra_controls' id='extra_controls_m_" + id + "' ><button class='extra_count_btn' id='extra_count_btn_m_" + id + "' onclick=\"changeExtraCount('" + id + "', -1);\">-</button></div>");
+	$('#extra_cell_' + id).append("<div class='extra_content_empty extra_content_btn' id='extra_content_" + id + "'onclick=\"changeExtraCount('" + id + "', +1);\"></div>");
+	$('#extra_content_' + id).append("<div class='extra_label' id='extra_name_" + id + "'>" + obj.name + "</div>");
+	$('#extra_content_' + id).append("<div class='extra_cost'><span id='extra_cost_" + id + "'>" + cost + "</span><span class='currency'>q</span></div>");
+	$('#extra_cell_' + id).append("<div class='extra_controls' id='extra_controls_p_" + id + "' ><button class='extra_count_btn' id='extra_count_btn_p_" + id + "' onclick=\"changeExtraCount('" + id + "', +1);\">+</button></div>");
+
+	$('#extra_count_btn_m_' + code).hide();
+	$('#extra_count_btn_p_' + code).hide();
+
+	setExtraEnabled(id, enabled);
+
+	if (enabled) {
+		selectedExtras[code] = 0;
+	}
+}
+
+function setExtraEnabled(code, enabled) {
+	$('#extra_cell_' + code).prop('disabled', !enabled);
+	if (!enabled) {
+		$('#extra_content_' + code).attr("onclick", "").unbind("click");
+	}
+	$('#extra_count_btn_m_' + code).prop('disabled', !enabled);
+	$('#extra_count_btn_p_' + code).prop('disabled', !enabled);
+}
+
+function changeExtraCount(code, amount) {
+
+	var count = (isNaN(selectedExtras[code]) ? 0 : selectedExtras[code]) + amount;
+	var minValue = TYPE == "extra" && CODE === code ? 1 : 0;
+	var maxValue = 9;
+	count = count < minValue ? minValue : count > maxValue ? maxValue : count;
+	selectedExtras[code] = count;
+
+	var obj = getService('extra', code);
+	var cost = formExtraCostLabel(obj, count);
+
+	$('#extra_cost_' + code).empty();
+
+	if (count == 0) {
+		$('#extra_cell_' + code).removeClass("active");
+		$('#extra_cost_' + code).append(cost);
+		$('#extra_content_' + code).removeClass("extra_content");
+		$('#extra_content_' + code).addClass("extra_content_empty");
+		$('#extra_count_btn_p_' + code).hide();
+		$('#extra_count_btn_m_' + code).hide();
+	} else {
+		$('#extra_cell_' + code).addClass("active");
+		$('#extra_cost_' + code).append(count + "&times;" + cost);
+		$('#extra_content_' + code).removeClass("extra_content_empty");
+		$('#extra_content_' + code).addClass("extra_content");
+		$('#extra_count_btn_p_' + code).show();
+		$('#extra_count_btn_m_' + code).show();
+	}
+
+	// update cost
+	refreshCost();
+}
+
+function formExtraCostLabel(obj, count) {
+	var cost = obj.cost;
+	if (IS_FREE_WASH && obj.id == 8) {
+		if (count == 1)
+			cost = 0;
+		else if (count == 0)
+			cost = "0/" + cost;
+	}
+	return cost;
+}
+
+function computeCost(initialValue) {
+
+	var value = TYPE == "extra" ? 0 : initialValue;
+
+	for(var key in selectedExtras) {
+		if (selectedExtras[key] != null && selectedExtras[key] > 0) {
+			var count = selectedExtras[key];
+			var service = getService("extra", key);
+			if (IS_FREE_WASH && service.id == 8) {
+				count--;
+			}
+			value += service.cost * count;
+		}
+	}
+
+	return value;
+}
+
+function isStock() {
+	return STOCK != null && STOCK == 'true';
+}
+
+function isStockSystem() {
+	return STOCK_SYSTEM && STOCK_SYSTEM == 'true';
+}
+
+function init(eventObj) {
+
+	var OPTIONS = eventObj.options;
+
+	let appMetricaUrl = "https://redirect.appmetrica.yandex.com/serve/244123731864119824?utm_source=terminal&terminal_id=";
+	let fullAppUrl = appMetricaUrl + eventObj.terminalId;
+
+	new QRCode('app_url_qr', {
+		text: fullAppUrl,
+		width: 200,
+		height: 200,
+		colorDark : "#000000",
+		colorLight : "#ffffff",
+		correctLevel : QRCode.CorrectLevel.H
+	});
+
+	new QRCode('app_url_qr_2', {
+		text: fullAppUrl,
+		width: 200,
+		height: 200,
+		colorDark : "#000000",
+		colorLight : "#ffffff",
+		correctLevel : QRCode.CorrectLevel.H
+	});
+
+	if (TYPE == "haircut" && !isStock() && OPTIONS != null && OPTIONS['promoCode'] == 'true') {
+		$("#btn_promocode").prop('disabled', false);
+	}
+
+	if (OPTIONS != null && OPTIONS['clientBonus'] == 'true' && !isStockSystem()) {
+
+		if (TYPE == 'haircut' || TYPE == 'extra') {
+			SHOW_BONUS_INFO = true;
+			console.log(NUMBER && !isStockSystem());
+			console.log(isStockSystem());
+
+			if (NUMBER && !isStockSystem()) {
+				reqClientBonus(NUMBER);
+			} else {
+				$("#btn_bonus").prop('disabled', false);
+			}
+		}
+
+		updateBonusField();
+
+		$("#bonus_block").show();
+	}
+
+	IS_PAYOUT_ENABLED = OPTIONS == null || OPTIONS['payout'] != 'false';
+	if (!IS_PAYOUT_ENABLED) {
+		$("#payment_change_block").empty();
+		$("#payment_change_block").addClass('payment_change_block_msg')
+		$("#payment_change_block").append('<div class="payout_disabled_msg">Внимание, терминал сдачу не дает!</div>')
+	}
+
+	IS_FREE_WASH = TYPE == 'haircut' && OPTIONS != null && OPTIONS['freeHairWash'] == 'true';
+	if (IS_FREE_WASH) {
+		changeExtraCount(getServiceById(8).code, 0);
+	}
+
+	startPay(NUMBER, isStock(), FROM_WHERE, POST, formPaymentParams());
+
+	if (initialCost <= 0) {
+		$("#btn_pay").prop('disabled', false);
+		setCashmachineEnabled(false, true);
+	} else {
+		setCashmachineEnabled(true, true);
+	}
+
+	posCheck();
+	sbpCheck();
+}
+
+
+function updateCostField() {
+	document.getElementById('paymentCost').innerHTML = commonCost;
+
+	if (commonCost <= 0) {
+		$("#btn_pay").prop('disabled', false);
+		$("#btn_by_card").prop('disabled', true);
+		$("#btn_by_sbp").prop('disabled', true);
+		setCashmachineEnabled(false, true);
+	} else {
+		$("#btn_pay").prop('disabled', true);
+		$("#btn_by_card").prop('disabled', !POS_IS_WORKING);
+		$("#btn_by_sbp").prop('disabled', !SBP_IS_WORKING);
+		setCashmachineEnabled(true, true);
+	}
+}
+
+
+function updateBonusField() {
+	if ($("#bonus_value")) {
+		let bonusValue = BONUS_DISCOUNT && BONUS_DISCOUNT > 0 ? "-" + BONUS_DISCOUNT : "+" + computeBonusValue(commonCost);
+		$("#bonus_value").empty();
+		$("#bonus_value").append(bonusValue);
+		$('#bonus_field_can_use').empty();
+		$('#bonus_field_can_use').append(computeBonusDiscount(commonCost));
+	}
+}
+
+
+function handleCashmachineEvent(eventType, eventValue) {
+	
+	if (eventType == "escrow") {
+		var balance = parseInt(document.getElementById('paymentSumm').innerHTML);
+		CURRENT_BANKNOTE = eventValue / 100;
+		
+		if (balance + CURRENT_BANKNOTE <= commonCost || !IS_PAYOUT_ENABLED)
+			stacking();
+		else
+			checkSummChange(balance + CURRENT_BANKNOTE, commonCost);
+	} else if (eventType == "banknote") {
+        var balance = addToPaymentSumm(eventValue / 100);
+
+		if (balance >= commonCost) {
+			setCashmachineEnabled(false, true);
+			$("#btn_pay").prop('disabled', false);
+
+			if (balance > commonCost && IS_PAYOUT_ENABLED) {
+				document.getElementById('paymentChange').innerHTML = balance - commonCost;
+			}
+		}
+
+		$("#btn_back").prop('disabled', true);
+		$("#btn_by_card").prop('disabled', true);
+		$("#btn_bonus").prop('disabled', true);
+	}
+	else if (eventType == "error") {
+		//setCashmachineEnabled(false);
+	}
+}
+
+function addToPaymentSumm(amount) {
+	var balance = parseInt(document.getElementById('paymentSumm').innerHTML);
+	balance += amount;
+	document.getElementById('paymentSumm').innerHTML = balance;
+
+	return balance;
+}
+
+function stacking() {
+	$("#btn_back").prop('disabled', true);
+	$("#btn_by_card").prop('disabled', true);
+	$("#btn_by_sbp").prop('disabled', true);
+	$("#btn_pay").prop('disabled', true);
+	$("#btn_bonus").prop('disabled', true);
+
+	$('.extra_cell').prop('disabled', true);
+	$('.extra_count_btn').prop('disabled', true);
+	$('.extra_content_btn').attr("onclick", "").unbind("click");
+
+	$("#btn_promocode").prop('disabled', true);
+	
+	stackingBanknote();
+}
+
+function handleCheckSummChange(result) {
+	if (result == 'true') {
+		stacking();
+	}
+	else {
+		openModal('#dialog');
+	}
+}
+
+function formPaymentParams() {
+
+	var params = "";
+
+	if (TYPE !== 'extra') {
+		params = getService(TYPE, CODE).name + ";" + initialCost + ";1;" + TYPE + ";" + CODE + ";" + getService(TYPE, CODE).id + ";" + POST + ";";
+	}
+
+	for(var key in selectedExtras) {
+
+		if (selectedExtras[key]) {
+
+			if (params.length > 0) {
+				params += "|";
+			}
+
+			var extra = getService("extra", key);
+			var count = selectedExtras[key];
+			if (IS_FREE_WASH && extra.id == 8) {
+				params += extra.name + ";" + 0 + ";" + 1 + ";extra;" + key + ";" + extra.id + ";" + POST + ";";
+				params += "|";
+				count--;
+			}
+			if (count > 0) {
+				params += extra.name + ";" + extra.cost + ";" + count + ";extra;" + key + ";" + extra.id + ";" + POST + ";";
+			}
+		}
+	}
+
+	return params;
+}
+
+function pay() {
+	setCashmachineEnabled(false, true);
+	$("#btn_pay").prop('disabled', true);
+	
+	var balance = document.getElementById('paymentSumm').innerHTML;
+	var params = formPaymentParams();
+	
+	payCmd(commonCost, balance, params, NUMBER, VOTING, STOCK == 'true' ? true : false, isStockSystem(), FROM_WHERE, 1, POST, 'services', PROMO_CODE, PROMO_CODE_DISCOUNT, computeCost(defCost), BONUS_DISCOUNT, personDataConsent);
+}
+
+function handlePayCmd(result, message, dispensed, change, terminalId, transactionId, checkSentToEmail, checkSentToSMS) {
+	
+	if (result == "ok") {
+		document.location.href = "ticket.html?check=" + encodeURIComponent(message) + "&transactionId=" + transactionId + "&checkSentToEmail=" + checkSentToEmail + "&checkSentToSMS=" + checkSentToSMS;
+	}
+	else {
+		closeModal();
+		setCashmachineEnabled(true, true);
+		posCheck();
+	}
+}
+
+
+
+// PIN
+
+function openPinPage(action) {
+
+	$('#pindialog_title').empty();
+	adminPinAction = action;
+
+	if (action == 'service') {
+		if (CODE == 'f') {
+			$('#pindialog_title').append("Вход в сервисный режим");
+			openModal('#pindialog');
+		}
+	} else if (action == 'cancel_pay') {
+		var balance = parseInt(document.getElementById('paymentSumm').innerHTML);
+		if (balance > 0 || CURRENT_BANKNOTE) {
+			$('#pindialog_title').append("Отмена текущей оплаты");
+			openModal('#pindialog');
+		}
+	}
+}
+
+function applyEnterPin() {
+	getAdminPin();
+}
+
+function handleGetAdminPin(result) {
+	if (result != null && result == document.getElementById('passw').value) {
+
+		if (adminPinAction == 'service') {
+			document.location.href = "test.html";
+		} else if (adminPinAction == 'cancel_pay') {
+			const balance = parseInt(document.getElementById('paymentSumm').innerHTML);
+			payCancelCmd(commonCost, balance, NUMBER, POST);
+			document.location.href = "index.html";
+		}
+	} else {
+		closeModal();
+	}
+}
+
+// Pay by card
+
+function handlePosCheck(isWorking, dateTime) {
+	POS_IS_WORKING = isWorking;
+	updateCostField();
+}
+
+function payByCard() {
+
+	$("#btn_pay").prop('disabled', true);
+	openModal('#pay_by_card_dialog');
+	
+	checkTimer();
+	
+	document.getElementById('by_card_cost').innerHTML = commonCost;
+	setCashmachineEnabled(false, true);
+
+	var balance = parseInt(document.getElementById('paymentSumm').innerHTML);
+
+	var summ = commonCost - balance;
+	var params = formPaymentParams();
+
+	payCmd(commonCost, summ, params, NUMBER, VOTING, STOCK == 'true' ? true : false, isStockSystem(), FROM_WHERE, 2, POST, 'services', PROMO_CODE, PROMO_CODE_DISCOUNT, computeCost(defCost), BONUS_DISCOUNT, personDataConsent);
+}
+
+
+// PromoCode
+
+function addPromoCode() {
+	$("#promocode_result_msg").empty();
+	$("#promocode_input").val('');
+
+    openModal('#promocode_dialog');
+}
+
+function applyEnterPromoCode() {
+
+    clearPromoCodeResultMsg();
+
+	$("#promocode_close").prop('disabled', true);
+	$("#promocode_apply").prop('disabled', true);
+
+	сheckPromoCode($("#promocode_input").val(), NUMBER, getService(TYPE, CODE).id);
+}
+
+function handleCheckPromoCode(res) {
+
+    if (res != null && res.result == 'ok') {
+
+		PROMO_CODE = $("#promocode_input").val();
+		PROMO_CODE_AMOUNT = res.options.amount;
+		PROMO_CODE_TYPE = res.options.type;
+		PROMO_CODE_RULES = res.promoCodeRules;
+
+		$("#promocode_dialog_content").empty();
+		$("#promocode_dialog_content")
+				.append('<div id="promocode_success_box">')
+				.append('<div class="font_32 dialog_text_box">Код принят!</div>')
+				.append('</div>')
+				.append('<div id="promocode_success_btns">')
+				.append('<a><button class="modal_button" onclick="closeModal();">ОК</button></a>')
+				.append('</div>');
+		$("#btn_promocode").prop('disabled', true);
+		$("#btn_bonus").prop('disabled', true);
+		$("#discount_block").show();
+		refreshCost();
+    } else {
+    	var errorText = 'Сервис временно не доступен';
+		if (res != null && res.result == 'system_error')
+			errorText = 'Сервис временно не доступен';
+		else if (res != null && res.result == 'PromoCode not found')
+			errorText = 'Код введен не верно';
+		else if (res != null && res.result == 'Phone number required')
+			errorText = 'Необходимо ввести номер телефона';
+		else if (res != null && res.result == 'Phone number exists')
+			errorText = 'Данный клиент уже обслуживался ранее';
+		else if (res != null && res.result == 'Wrong phone number')
+			errorText = 'Не верный номер телефона';
+		else if (res != null && res.result == 'Service not allowed for')
+			errorText = 'Промокод не работает для выбранной стрижки';
+		else if (res != null && res.result == 'PromoCode already used')
+			errorText = 'Промокод уже использован';
+
+		$("#promocode_result_msg").append(errorText);
+		$("#promocode_close").prop('disabled', false);
+		$("#promocode_apply").prop('disabled', false);
+		setTimeout('clearPromoCodeResultMsg()', 3000);
+    }
+}
+
+function refreshCost() {
+
+	var amount = PROMO_CODE_AMOUNT != null ? parseInt(PROMO_CODE_AMOUNT) : 0;
+	var cost = computeCost(initialCost);
+	var discount = 0;
+
+	if (PROMO_CODE != null) {
+		if (PROMO_CODE_TYPE == 'discount' || PROMO_CODE_TYPE == 'discount_haircut') {
+
+			let baseCost = PROMO_CODE_TYPE == 'discount' ? cost : initialCost;
+
+			if (PROMO_CODE_RULES != null) {
+				for (var i = 0; i < PROMO_CODE_RULES.length; i++) {
+					var rule = PROMO_CODE_RULES[i];
+					if (rule.limit <= baseCost && rule.amount > amount) {
+						amount = rule.amount;
+					}
+				}
+			}
+
+			if (amount > baseCost) {
+				amount = baseCost;
+			}
+
+			PROMO_CODE_DISCOUNT = amount;
+			cost -= amount;
+		} else if (PROMO_CODE_TYPE == 'fix_price') {
+
+			if (initialCost > amount) {
+				PROMO_CODE_DISCOUNT = initialCost - amount;
+				cost -= PROMO_CODE_DISCOUNT;
+			} else {
+				PROMO_CODE_DISCOUNT = 0;
+			}
+		}
+
+		discount = PROMO_CODE_DISCOUNT;
+	}
+
+	if (isUseBonus() && getBonusAmount()) {
+		BONUS_DISCOUNT = computeBonusDiscount(cost);
+		discount = BONUS_DISCOUNT;
+		cost -= BONUS_DISCOUNT;
+	}
+
+	if (cost < 0) {
+		cost = 0;
+	}
+
+	$("#discount").empty();
+	$("#discount").append(discount);
+
+	commonCost = cost;
+
+	updateCostField();
+	updateBonusField();
+}
+
+function computeBonusDiscount(cost) {
+	let availableDiscount = (cost / 100) * 30;
+	let bonusAmount = getBonusAmount();
+	let bonus = (bonusAmount > availableDiscount ? availableDiscount : bonusAmount);
+	return Math.floor(bonus/50) * 50;
+}
+
+function clearPromoCodeResultMsg() {
+	$("#promocode_result_msg").empty();
+	$("#promocode_result_msg").removeClass('success');
+}
+
+
+// Misc
+
+var timer = 120000;
+
+function checkTimer() {
+	timer = timer - 1000;
+
+	if (timer <= 0) {
+		closeModal();
+	}
+	
+	setTimeout('checkTimer();', 1000);
+}
+
+// SBP
+
+function payBySbp() {
+
+	$("#btn_pay").prop('disabled', true);
+	setCashmachineEnabled(false, true);
+	sbpPayment(commonCost * 100);
+
+	document.getElementById('by_sbp_cost').innerHTML = commonCost;
+	openModal('#pay_by_sbp_dialog');
+
+	$("#sbp_qr").empty();
+	$("#sbp_qr").addClass('loader');
+}
+
+function sbpDialogCancel() {
+	closeModal();
+	sbpCancel();
+	updateCostField();
+}
+
+function handleSbpResponse(result) {
+
+	if (result.cmd == 'check') {
+		SBP_IS_WORKING = result.result == 'ok';
+		updateCostField();
+	} else if (result.cmd == 'payment') {
+		if (result.text) {
+
+			$("#sbp_qr").removeClass('loader');
+			$("#sbp_qr").empty();
+
+			new QRCode('sbp_qr', {
+				text: result.text,
+				width: 200,
+				height: 200,
+				colorDark : "#000000",
+				colorLight : "#f1f1f1",
+				correctLevel : QRCode.CorrectLevel.H
+			});
+		} else {
+			setCashmachineEnabled(true, true);
+			sbpDialogCancel();
+		}
+	} else if (result.cmd == 'event_payment_ok') {
+
+		var balance = parseInt(document.getElementById('paymentSumm').innerHTML);
+		var summ = commonCost - balance;
+		var params = formPaymentParams();
+
+		payCmd(commonCost, summ, params, NUMBER, VOTING, STOCK == 'true' ? true : false, isStockSystem(), FROM_WHERE, 3, POST, 'services', PROMO_CODE, PROMO_CODE_DISCOUNT, computeCost(defCost), BONUS_DISCOUNT, personDataConsent);
+	}
+}
+
+
+
+</script>
+
+</head>
+
+
+<body onload="initPage(); DispatcherWebSocket();">
+
+<!-- Main Container -->
+<div class="container"> 
+  <!-- Stats Gallery Section -->
+  <div class="extras_block" id="box_extra"></div>
+  <div class="center1">
+    <div id="positionImgClass">
+		<div class="image_block" id="haircut_img"></div>
+		<div class="payment_block" id="payment_block">
+			<div class="payment_block_content" id="payment_block_content">
+				<div class="payment_block_item">
+					<stitog1>К ОПЛАТЕ:&nbsp;<stsum1 id="paymentCost">0</stsum1><span class="currency">q</span></stitog1>
+				</div>
+				<div class="payment_block_item" id="discount_block" style="display: none;">
+					<stitog1>СКИДКА:&nbsp;<stsum1 id="discount">0</stsum1><span class="currency">q</span></stitog1>
+				</div>
+				<div class="payment_block_item">
+					<stitog1>ВНЕСЕНО:&nbsp;<stsum1 id="paymentSumm">0</stsum1><span class="currency">q</span></stitog1>
+				</div>
+				<div class="payment_block_item" ondblclick="openPinPage('service');" id="payment_change_block">
+					<stitog1>СДАЧА:&nbsp;<stsum1 id="paymentChange">0</stsum1><span class="currency">q</span></stitog1>
+				</div>
+			</div>
+			<div class="payment_block_item" id="bonus_block" style="display: none;">
+				<stitog1>Бонусы:&nbsp;<stsum1 id="bonus_value" style="color: #d25752"></stsum1>
+					<button class="client_bonus_btn" id="btn_bonus" disabled="true" onclick="bonusDialog();">списать</button>
+				</stitog1>
+			</div>
+<!--			<button onclick="handleCashmachineEvent('escrow', 5000);">+50e</button>-->
+<!--			<button onclick="handleCashmachineEvent('banknote', 5000);">+50s</button>-->
+		</div>
+    </div>
+    <div class="centerfon">
+       <st1 id="positionName"></st1>
+    </div>
+  </div>
+  <div class="line1">
+	  <button class="thumb1 payment" id="btn_back" onclick="document.location.href = 'index.html';" ondblclick="openPinPage('cancel_pay');"><div ondblclick="openPinPage('cancel_pay');" class="thumb1text opl font_30">НАЗАД</div></button>
+	  <button class="thumb1 payment" id="btn_promocode" onclick="addPromoCode();" disabled="true"><div class="thumb1text opl font_30">ПРОМОКОД</div></button>
+	  <button class="thumb1 payment pay_by_card" id="btn_by_card" onclick="payByCard();" disabled="true"><div class="thumb1text opl font_30">КАРТОЙ</div></button>
+	  <button class="thumb1 payment pay_by_sbp" id="btn_by_sbp" onclick="payBySbp();" disabled="true"><div class="thumb1text opl font_30 ">СБП</div></button>
+	  <button class="thumb1 payment" id="btn_pay" disabled="true" onclick="pay();" ><div class="thumb1text opl font_30">ОПЛАТИТЬ</div></button>
+  </div>
+</div>
+<!-- Main Container Ends -->
+
+
+<!-- modal window -->
+<div id="boxes">
+
+	<!-- not have a change dialog -->
+	<div id="dialog" class="window">
+
+		<div class="logo"></div>
+		<div class="font_100 dialog_text_box red">ВНИМАНИЕ!</div>
+
+		<div class="font_32 dialog_text_box">В ТЕРМИНАЛЕ НЕДОСТАТОЧНО СРЕДСТВ <br/>ДЛЯ ВЫДАЧИ СДАЧИ</div>
+
+		<div class="font_32 dialog_text_box">ВЕРНУТЬ ПОСЛЕДНЮЮ ВСТАВЛЕННУЮ БАНКНОТУ <br/>ИЛИ ОПЛАТИТЬ БЕЗ СДАЧИ?</div>
+
+		<div class="dialog_footer">
+			<a><button class="modal_button" onclick="returnBanknote();closeModal();">Вернуть банкноту</button></a>
+			<a><button class="modal_button" onclick="stacking();closeModal();">Оплатить без сдачи</button></a>
+		</div>
+	</div>
+
+
+	<!-- pin pad dialog -->
+	<div id="pindialog" class="window">
+
+	<div class="font_32 dialog_text_box red" id="pindialog_title"></div>
+	<div class="font_32 dialog_text_box">Введите pin:</div>
+	<table width="100%">
+	<tr>
+	<td align="center" colspan="3">
+		<input id="passw" class="login_input_field" type="password"><br/>
+		<table>
+				<tr>
+				<td><button onclick="addNum('1', 'passw');" class="num_pad_button">1</button></td>
+				<td><button onclick="addNum('2', 'passw');" class="num_pad_button">2</button></td>
+				<td><button onclick="addNum('3', 'passw');" class="num_pad_button">3</button></td>
+				</tr>
+				<tr>
+				<td><button onclick="addNum('4', 'passw');" class="num_pad_button">4</button></td>
+				<td><button onclick="addNum('5', 'passw');" class="num_pad_button">5</button></td>
+				<td><button onclick="addNum('6', 'passw');" class="num_pad_button">6</button></td>
+				</tr>
+				<tr>
+				<td><button onclick="addNum('7', 'passw');" class="num_pad_button">7</button></td>
+				<td><button onclick="addNum('8', 'passw');" class="num_pad_button">8</button></td>
+				<td><button onclick="addNum('9', 'passw');" class="num_pad_button">9</button></td>
+				</tr>
+				<tr>
+				<td><button onclick="addNum('0', 'passw');" class="num_pad_button">0</button></td>
+				<td colspan="2"><button onclick="delNum('passw');" class="clear_pad_button">стереть</button></td>
+				</tr>
+		</table>
+	</td>
+	</tr>
+	<tr>
+		<td width="43%" style="padding: 20px;">
+			<a><button class="modal_button" onclick="closeModal();">отмена</button></a>
+		</td>
+		<td width="4%"></td>
+		<td width="43%">
+			<a><button class="modal_button" onclick="applyEnterPin();">ok</button></a>
+		</td>
+	</tr>
+	</table>
+	
+	</div>
+
+
+	
+	<!-- pay by card dialog -->
+	<div id="pay_by_card_dialog" class="window">
+		<div class="logo"></div>
+		<div class="font_32 dialog_text_box">ОПЛАТА КАРТОЙ</div>
+		<div class="font_16 dialog_text_box">К ОПЛАТЕ</div>
+		<div class="font_100 red"><txt id="by_card_cost">0</txt><span class="currency">q</span></div>
+		<div class="font_32 dialog_text_box">СЛЕДУЙТЕ ИНСТРУКЦИЯМ <br/>НА БАНКОВСКОМ ТЕРМИНАЛЕ </div>
+		<div class="font_16 dialog_footer">ДЛЯ ОТМЕНЫ НАЖМИТЕ КНОПКУ ОТМЕНА <br/>НА БАНКОВСКОМ ТЕРМИНАЛЕ</div>
+	</div>
+
+
+	<!-- pay by sbp dialog -->
+	<div id="pay_by_sbp_dialog" class="window">
+		<div class="logo"></div>
+		<div class="font_32 dialog_text_box">ОПЛАТА ЧЕРЕЗ</div>
+		<div class="font_32 dialog_text_box">СИСТЕМУ БЫСТРЫХ ПЛАТЕЖЕЙ</div>
+		<div class="dialog_text_box">
+			<div class="qr-container"><div id="sbp_qr"></div></div>
+		</div>
+		<div class="font_48 red"><txt id="by_sbp_cost">0</txt><span class="currency">q</span></div>
+		<div class="font_16 dialog_footer"><a><button class="modal_button" id="sbp_close" onclick="sbpDialogCancel();">отмена</button></a></div>
+	</div>
+
+
+
+	<!-- PromoCode dialog -->
+	<div id="promocode_dialog" class="window">
+		<div class="logo"></div>
+		<div id="promocode_dialog_content">
+			<div class="font_32 dialog_text_box">Введите промокод</div>
+			<table width="100%">
+				<tr>
+					<td align="center" colspan="3">
+						<input id="promocode_input"><br/>
+						<table>
+							<tr>
+								<td><button onclick="addNum('1', 'promocode_input');" class="num_pad_button">1</button></td>
+								<td><button onclick="addNum('2', 'promocode_input');" class="num_pad_button">2</button></td>
+								<td><button onclick="addNum('3', 'promocode_input');" class="num_pad_button">3</button></td>
+							</tr>
+							<tr>
+								<td><button onclick="addNum('4', 'promocode_input');" class="num_pad_button">4</button></td>
+								<td><button onclick="addNum('5', 'promocode_input');" class="num_pad_button">5</button></td>
+								<td><button onclick="addNum('6', 'promocode_input');" class="num_pad_button">6</button></td>
+							</tr>
+							<tr>
+								<td><button onclick="addNum('7', 'promocode_input');" class="num_pad_button">7</button></td>
+								<td><button onclick="addNum('8', 'promocode_input');" class="num_pad_button">8</button></td>
+								<td><button onclick="addNum('9', 'promocode_input');" class="num_pad_button">9</button></td>
+							</tr>
+							<tr>
+								<td><button onclick="clearNum('promocode_input');" class="num_pad_button">C</button></td>
+								<td><button onclick="addNum('0', 'promocode_input');" class="num_pad_button">0</button></td>
+								<td><button onclick="delNum('promocode_input');" class="num_pad_button"><</button></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<div id="promocode_result_msg"></div>
+					</td>
+				</tr>
+				<tr>
+					<td width="43%">
+						<a><button class="modal_button" id="promocode_close" onclick="closeModal();">отмена</button></a>
+					</td>
+					<td width="4%"></td>
+					<td width="43%">
+						<a><button class="modal_button" id="promocode_apply" onclick="applyEnterPromoCode();">применить</button></a>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+	<!-- Bonus Info dialog -->
+	<div id="bonus_dialog" class="window">
+		<div class="logo"></div>
+		<div class="bonus_dialog_content">
+			<div class="dialog_text_box"></div>
+			<div class="dialog_text_box font_32" id="bonus_field_fio"></div>
+			<div class="dialog_text_box font_32">Номер телефона: <span id="bonus_field_number"></span></div>
+			<div class="dialog_text_box"></div>
+			<div class="dialog_text_box font_32">Ваш бонусный баланс: <span class="red" id="bonus_field_counter"></span></div>
+			<div class="dialog_text_box font_32">Можно списать:  <span class="red" id="bonus_field_can_use"></span></div>
+			<div class="dialog_text_box bonus_comment">*Бонусами можно оплатить до 30% стоимости (кратно 50р)</div>
+		</div>
+		<div class="line_buttons">
+			<button class="modal_button" onclick='closeModal();'>Закрыть</button>
+			<button class="modal_button" id="btn_use_bonus" onclick='bonusPinDialog();'>Списать</button>
+		</div>
+	</div>
+
+	<!-- bonus pin pad dialog -->
+	<div id="bonus_pin_dialog" class="window">
+		<div class="logo"></div>
+		<div class="bonus_dialog_content">
+			<div class="bonus_dialog_label">Введите дату рождения:</div>
+			<table width="100%">
+				<tr>
+					<td align="center" colspan="3">
+						<input class="bonus_pin_field" placeholder="Д" id="date_0"><input class="bonus_pin_field" placeholder="Д" id="date_1">
+						<span class="bonus_pin_field_separator">/</span>
+						<input class="bonus_pin_field" placeholder="М" id="date_2"> <input class="bonus_pin_field" placeholder="М" id="date_3">
+						<span class="bonus_pin_field_separator">/</span>
+						<input class="bonus_pin_field" placeholder="Г" id="date_4"><input class="bonus_pin_field" placeholder="Г" id="date_5"><input class="bonus_pin_field" placeholder="Г" id="date_6"><input class="bonus_pin_field" placeholder="Г" id="date_7"><br/><br/>
+						<table>
+							<tr>
+								<td><button onclick="addBonusPinNum('1');" class="num_pad_button">1</button></td>
+								<td><button onclick="addBonusPinNum('2');" class="num_pad_button">2</button></td>
+								<td><button onclick="addBonusPinNum('3');" class="num_pad_button">3</button></td>
+							</tr>
+							<tr>
+								<td><button onclick="addBonusPinNum('4');" class="num_pad_button">4</button></td>
+								<td><button onclick="addBonusPinNum('5');" class="num_pad_button">5</button></td>
+								<td><button onclick="addBonusPinNum('6');" class="num_pad_button">6</button></td>
+							</tr>
+							<tr>
+								<td><button onclick="addBonusPinNum('7');" class="num_pad_button">7</button></td>
+								<td><button onclick="addBonusPinNum('8');" class="num_pad_button">8</button></td>
+								<td><button onclick="addBonusPinNum('9');" class="num_pad_button">9</button></td>
+							</tr>
+							<tr>
+								<td><button class="num_pad_button" onclick="clearBonusPin();"/>C</td>
+								<td><button onclick="addBonusPinNum('0');" class="num_pad_button">0</button></td>
+								<td><button onclick="delBonusPinNum();" class="num_pad_button"><</button></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<div id="bonus_result_msg"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="line_buttons">
+			<button class="modal_button" onclick="closeModal();">отмена</button>
+			<button class="modal_button" onclick="applyBonusEnterPin();">ok</button>
+		</div>
+	</div>
+
+	<!-- bonus registration dialog -->
+	<div id="bonus_reg_dialog" class="window">
+		<div class="logo"></div>
+		<div class="bonus_dialog_content">
+			<div class="dialog_text_box"></div>
+			<div class="dialog_text_box font_26">Ходите выгодно со скидкой до 30%</div>
+			<div class="dialog_text_box font_26">Скачивайте мобильное приложение и </div>
+			<div class="dialog_text_box font_26">подключайтесь уже сегодня!</div>
+			<div class="dialog_text_box font_26">
+				<div class="qr-container bonus_qr">
+					<div id="app_url_qr" class="qr-code"></div>
+				</div>
+			</div>
+			<div class="dialog_text_box font_20">
+				<p>отсканируйте qr-код и скачайте наше приложение</p>
+			</div>
+		</div>
+		<div class="line_buttons">
+			<button class="modal_button" onclick="closeModal();">закрыть</button>
+		</div>
+	</div>
+
+	<!-- bonus registration dialog with bonus amount -->
+	<div id="bonus_reg_dialog_with_amount" class="window">
+		<div class="logo"></div>
+		<div class="bonus_dialog_content">
+			<div class="dialog_text_box"></div>
+			<div class="dialog_text_box font_26">У вас накоплено <span class="red" id="bonus_field_info"></span> супербонусов.</div>
+			<div class="dialog_text_box font_26">Для списания активируйте бонусы</div>
+			<div class="dialog_text_box font_26">в мобильном приложении!</div>
+			<div class="dialog_text_box font_26">
+				<div class="qr-container bonus_qr">
+					<div id="app_url_qr_2" class="qr-code"></div>
+				</div>
+			</div>
+			<div class="dialog_text_box font_20">
+				<p>отсканируйте qr-код и скачайте наше приложение</p>
+			</div>
+		</div>
+		<div class="line_buttons">
+			<button class="modal_button" onclick="closeModal();">закрыть</button>
+		</div>
+	</div>
+
+	<div id="mask"></div>
+</div>
+
+</body>
+</html>

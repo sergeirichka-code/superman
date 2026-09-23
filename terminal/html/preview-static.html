@@ -9,72 +9,20 @@
 <link href="css/home-v3.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" href="css/modal-win.css">
 
-<script src="../src/resources/services.cfg"></script>
-<script src="../dist/services.cfg"></script>
-<script src="../src/resources/market.cfg"></script>
-<script src="../dist/market.cfg"></script>
-<script type="text/javascript" src="js/dispatcher.js"></script>
-<script type="text/javascript" src="js/configuration.js"></script>
-<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-<script type="text/javascript" src="js/modal-win.js"></script>
-<script type="text/javascript" src="js/pinger.js"></script>
 
-<script>
-  var nextUrl = "client_phone.html";
 
-  function initView() {
-    initBtn('haircut', 'a');
-    initBtn('haircut', 'e');
-  }
 
-  function next(params) {
-    document.location.href = nextUrl + "?type=haircut&code=" + params;
-  }
 
-  function init(info) {
-    setCashmachineEnabled(false, true);
-    pinger(info.options);
-  }
 
-  function refreshSettings() {
-    window.location.reload();
-  }
 
-  function openService(code) {
-    var service = getService('haircut', code);
-    if (!service || !isServiceEnabled(service)) return;
-    next(code);
-  }
 
-  function handleStaffShiftOperation(result) {
-    let messageText = '';
 
-    if (result.text == 'shift_opened') {
-      messageText = "Смена открыта";
-      setTimeout('closeModal()', 1000);
-    }
-    else if (result.text == 'shift_already_opened')
-      messageText = "Смена уже открыта";
-    else if (result.text == 'shift_closed') {
-      messageText = "Смена закрыта";
-      setTimeout('closeModal()', 1000);
-    }
-    else if (result.text == 'shift_already_closed')
-      messageText = "Смена уже закрыта";
-    else if (result.text == 'pin_not_found')
-      messageText = "Введен не верный код";
 
-    $("#staff_op_result_msg").text(messageText);
-  }
 
-  function beforeStaffShiftOperation() {
-    $("#staff_op_result_msg").empty();
-  }
-</script>
+
 </head>
 
-<body class="home-v3" onload="initView(); DispatcherWebSocket(); fitTerminalStage();" onresize="fitTerminalStage();">
-  <div class="terminal-stage">
+<body class="home-v3">
   <main class="terminal-app">
     <header class="terminal-header">
       <button class="brand-button" ondblclick="openModal('#staff_pin_dialog');" aria-label="СУПЕРМЕН">
@@ -130,16 +78,16 @@
           </div>
           <div class="service-card-body">
             <div class="service-copy">
-              <h2 id="haircut_a_name"></h2>
-              <p>Машинкой, без перехода</p>
+              <h2 id="haircut_a_name">ПОД НАСАДКУ</h2>
+              <p>Без перехода, только краевая</p>
             </div>
-            <div class="service-card-hint">КОРОТКАЯ РАВНОМЕРНАЯ ДЛИНА</div>
+            <div class="service-card-hint">МАКСИМАЛЬНО КОРОТКО И АККУРАТНО</div>
             <div class="service-meta">
               <span class="service-select-label">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
                 Выбрать
               </span>
-              <strong><span id="haircut_a_cost">0</span> <span class="rub">₽</span></strong>
+              <strong><span id="haircut_a_cost">500</span> <span class="rub">₽</span></strong>
             </div>
             <span class="card-arrow">›</span>
           </div>
@@ -153,7 +101,7 @@
           <div class="service-card-body">
             <span class="corner-stripes"></span>
             <div class="service-copy">
-              <h2 id="haircut_e_name"></h2>
+              <h2 id="haircut_e_name">СТРИЖКА</h2>
               <p>Любая форма, с переходом</p>
             </div>
             <div class="service-card-hint">ФОРМУ ОБСУДИ С МАСТЕРОМ</div>
@@ -162,7 +110,7 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
                 Выбрать
               </span>
-              <strong><span id="haircut_e_cost">0</span> <span class="rub">₽</span></strong>
+              <strong><span id="haircut_e_cost">1000</span> <span class="rub">₽</span></strong>
             </div>
             <span class="card-arrow">›</span>
           </div>
@@ -170,7 +118,6 @@
       </div>
     </section>
   </main>
-  </div>
 
   <section id="staff_pin_dialog" class="window" style="display:none;">
     <div id="staff_pin" class="staff_open_shift">
@@ -189,20 +136,5 @@
       <div class="actions"><button onclick="staffPinOkClick();">OK</button></div>
     </div>
   </section>
-
-
-<script>
-  function fitTerminalStage() {
-    var baseW = 1280, baseH = 1024;
-    var vw = window.innerWidth || document.documentElement.clientWidth || baseW;
-    var vh = window.innerHeight || document.documentElement.clientHeight || baseH;
-    var scale = Math.min(vw / baseW, vh / baseH);
-    if (!isFinite(scale) || scale <= 0) scale = 1;
-    document.documentElement.style.setProperty('--terminal-scale', Math.min(scale, 1).toFixed(4));
-  }
-  window.addEventListener('resize', fitTerminalStage);
-  window.addEventListener('orientationchange', fitTerminalStage);
-</script>
-
 </body>
 </html>

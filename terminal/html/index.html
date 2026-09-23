@@ -5,6 +5,43 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>MainSU</title>
+<script>
+(function () {
+  var BASE_W = 1280;
+  var BASE_H = 1024;
+
+  function calculateTerminalScale() {
+    var vw = window.innerWidth || document.documentElement.clientWidth || BASE_W;
+    var vh = window.innerHeight || document.documentElement.clientHeight || BASE_H;
+
+    // Always fit the complete 1280×1024 terminal inside the visible browser area.
+    // This prevents vertical scrolling and preserves the exact 5:4 proportions.
+    var scale = Math.min(vw / BASE_W, vh / BASE_H);
+
+    // Native terminal remains pixel-perfect 1:1.
+    if (Math.abs(vw - BASE_W) <= 2 && Math.abs(vh - BASE_H) <= 2) {
+      scale = 1;
+    }
+
+    if (!isFinite(scale) || scale <= 0) scale = 1;
+    return scale;
+  }
+
+  function applyTerminalScale() {
+    var scale = calculateTerminalScale();
+    var root = document.documentElement;
+    root.style.setProperty('--terminal-scale', scale.toFixed(4));
+    root.style.setProperty('--terminal-shell-width', (BASE_W * scale).toFixed(2) + 'px');
+    root.style.setProperty('--terminal-shell-height', (BASE_H * scale).toFixed(2) + 'px');
+    root.classList.add('terminal-scale-ready');
+  }
+
+  window.fitTerminalStage = applyTerminalScale;
+  applyTerminalScale();
+  window.addEventListener('resize', applyTerminalScale);
+  window.addEventListener('orientationchange', applyTerminalScale);
+})();
+</script>
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <link href="css/home-v3.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" href="css/modal-win.css">
@@ -73,7 +110,8 @@
 </script>
 </head>
 
-<body class="home-v3" onload="initView(); DispatcherWebSocket(); fitTerminalStage();" onresize="fitTerminalStage();">
+<body class="home-v3" onload="initView(); DispatcherWebSocket(); fitTerminalStage();">
+  <div class="terminal-shell">
   <div class="terminal-stage">
   <main class="terminal-app">
     <header class="terminal-header">
@@ -171,6 +209,7 @@
     </section>
   </main>
   </div>
+  </div>
 
   <section id="staff_pin_dialog" class="window" style="display:none;">
     <div id="staff_pin" class="staff_open_shift">
@@ -190,19 +229,6 @@
     </div>
   </section>
 
-
-<script>
-  function fitTerminalStage() {
-    var baseW = 1280, baseH = 1024;
-    var vw = window.innerWidth || document.documentElement.clientWidth || baseW;
-    var vh = window.innerHeight || document.documentElement.clientHeight || baseH;
-    var scale = Math.min(vw / baseW, vh / baseH);
-    if (!isFinite(scale) || scale <= 0) scale = 1;
-    document.documentElement.style.setProperty('--terminal-scale', Math.min(scale, 1).toFixed(4));
-  }
-  window.addEventListener('resize', fitTerminalStage);
-  window.addEventListener('orientationchange', fitTerminalStage);
-</script>
 
 </body>
 </html>

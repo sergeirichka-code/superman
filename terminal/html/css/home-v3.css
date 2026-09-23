@@ -7,16 +7,22 @@
   --muted:#68748b;
   --line:#deded9;
   --terminal-scale:1;
+  --terminal-shell-width:1280px;
+  --terminal-shell-height:1024px;
 }
-html,body{width:100%;height:100%;margin:0}
+html,body{width:100%;min-height:100%;margin:0}
+html{background:var(--navy)}
+body.home-v3{visibility:hidden}
+html.terminal-scale-ready body.home-v3{visibility:visible}
 body.home-v3{
-  min-width:0;min-height:0;overflow:hidden;background:var(--navy);color:var(--navy);
+  min-width:0;min-height:100vh;overflow:hidden;background:var(--navy);color:var(--navy);
   display:flex;align-items:center;justify-content:center;font-family:OptimaCyr,Arial,sans-serif;
   cursor:default;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
 }
 .home-v3 *{box-sizing:border-box}
 .home-v3 button{cursor:pointer}
-.terminal-stage{width:1280px;height:1024px;transform:scale(var(--terminal-scale));transform-origin:center center;flex:0 0 auto}
+.terminal-shell{width:var(--terminal-shell-width);height:var(--terminal-shell-height);margin:0;position:relative;overflow:hidden;flex:0 0 auto}
+.terminal-stage{width:1280px;height:1024px;transform:scale(var(--terminal-scale));transform-origin:top left}
 .terminal-app{width:1280px;height:1024px;padding:14px 16px 16px;background:var(--navy);display:grid;grid-template-rows:118px minmax(0,1fr);gap:12px;overflow:hidden}
 
 /* header */
@@ -76,3 +82,33 @@ body.home-v3{
 
 /* legacy unused popup styles intentionally omitted: clicking a service navigates directly */
 .home-v3 .window{font-family:OptimaCyr,Arial,sans-serif}
+
+
+/* v21: desktop preview + no first-paint scale jump */
+@media (min-width:1280px){
+  .terminal-shell{margin-left:auto;margin-right:auto}
+}
+
+
+/* v22: fit complete 1280x1024 canvas into viewport, no scroll */
+html,body{overflow:hidden}
+
+
+/* v23 FINAL: logo balance + final decorative cleanup */
+.brand-button{
+  width:172px;
+  height:90px;
+}
+.brand-button img{
+  width:156px;
+  height:86px;
+}
+
+/* Keep the red stripe motif, but move it into free space so it never touches copy */
+#haircut_e .service-card-body .corner-stripes{
+  width:42px;
+  height:42px;
+  right:22px;
+  top:156px;
+  opacity:.26;
+}

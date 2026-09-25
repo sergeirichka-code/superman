@@ -1,0 +1,396 @@
+:root{
+  --navy:#142c5d;
+  --red:#ef3f43;
+  --cream:#f3f0ea;
+  --paper:#fbfaf5;
+  --white:#fff;
+  --muted:#68748b;
+  --line:#deded9;
+  --terminal-scale:1;
+  --terminal-shell-width:1280px;
+  --terminal-shell-height:1024px;
+}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--navy)}
+body.phone-v2{visibility:hidden}
+html.terminal-scale-ready body.phone-v2{visibility:visible}
+body.phone-v2{min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;color:var(--navy);font-family:OptimaCyr,Arial,sans-serif;cursor:default;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.phone-v2 *{box-sizing:border-box}
+.phone-v2 button{cursor:pointer}
+.terminal-shell{width:var(--terminal-shell-width);height:var(--terminal-shell-height);position:relative;overflow:hidden;flex:0 0 auto}
+.terminal-stage{width:1280px;height:1024px;transform:scale(var(--terminal-scale));transform-origin:top left}
+.phone-app{width:1280px;height:1024px;padding:18px 20px 20px;background:var(--navy);display:grid;grid-template-rows:minmax(0,1fr);overflow:hidden}
+
+.phone-header{position:relative;display:flex;align-items:center;justify-content:flex-end;padding:0 18px;overflow:hidden}
+.phone-header:after{content:"";position:absolute;right:18%;bottom:-120px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.025);box-shadow:165px 46px 0 rgba(255,255,255,.02);pointer-events:none}
+.brand-button{position:absolute;left:18px;top:50%;transform:translateY(-50%);z-index:2;width:172px;height:90px;padding:0;border:0;background:transparent;display:flex;align-items:center;justify-content:flex-start}
+.brand-button img{width:156px;height:86px;object-fit:contain;object-position:left center}
+.phone-header-title{position:relative;z-index:2;color:#fff;font:22px/1 OptimaCyr,Arial,sans-serif;font-weight:800;letter-spacing:.3px;opacity:.96}
+
+.phone-surface{position:relative;min-height:0;height:100%;padding:34px 34px 30px;border-radius:16px 16px 8px 8px;background:var(--cream);display:grid;grid-template-rows:150px minmax(0,1fr) 96px;gap:20px;overflow:hidden}
+.phone-surface:before{content:"";position:absolute;right:-46px;bottom:-55px;width:220px;height:220px;background:url('../images/decor-dot-circle.png') center/contain no-repeat;opacity:.045}
+.phone-heading{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.phone-heading-copy{min-width:0}
+.eyebrow{display:inline-flex;align-items:center;justify-content:center;padding:8px 13px 7px;border-radius:8px;background:var(--red);color:#fff;font:17px/1 Molot,Arial,sans-serif;letter-spacing:.2px;margin-bottom:11px}
+.phone-heading h1{margin:0;color:var(--navy);font:48px/.98 Molot,Arial,sans-serif;letter-spacing:.2px}
+.phone-heading p{margin:7px 0 0;color:var(--muted);font:23px/1.15 OptimaCyr,Arial,sans-serif}
+.phone-heading .phone-note{margin-top:7px;color:var(--red);font:16px/1.15 OptimaCyr,Arial,sans-serif;font-weight:700}
+.phone-heading-art{width:154px;height:92px;flex:0 0 154px;position:relative;display:flex;align-items:center;justify-content:center}
+.phone-icon-box{width:74px;height:74px;border-radius:15px;background:#fff;box-shadow:0 10px 24px rgba(16,38,80,.12);display:grid;place-items:center}
+.phone-icon-box svg{width:42px;height:42px;fill:none;stroke:var(--red);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.phone-heading-art>img{position:absolute;width:48px;right:2px;top:0;opacity:.85}
+
+.phone-content{position:relative;z-index:2;min-height:0;display:grid;grid-template-columns:minmax(0,1.2fr) 430px;gap:24px}
+.phone-card,.keypad-card{min-height:0;border:1px solid #d8d9d6;border-radius:14px;background:#fff;box-shadow:0 8px 24px rgba(16,38,80,.10)}
+.phone-card{padding:30px 34px 28px;display:flex;flex-direction:column}
+.phone-card-label{color:var(--navy);font:19px/1 Molot,Arial,sans-serif;opacity:.72;margin-bottom:24px}
+.phone-display{min-height:142px;border:2px solid #d9dde5;border-radius:14px;background:var(--paper);display:flex;align-items:center;justify-content:center;gap:7px;padding:18px 20px;box-shadow:inset 0 2px 0 rgba(20,44,93,.025)}
+.phone-display .country{color:var(--navy);font:56px/1 Molot,Arial,sans-serif;margin-right:6px}
+.phone-display .sep{color:#9aa4b6;font:44px/1 Arial,sans-serif}
+.phone-display .digit{width:38px;height:64px;border-bottom:4px solid #bdc4d0;color:var(--navy);font:56px/1 Molot,Arial,sans-serif;text-align:center;display:inline-flex;align-items:center;justify-content:center}
+.phone-display .dash{margin:0 -1px}
+.phone-helper{margin-top:24px;display:flex;align-items:center;gap:12px;color:#647087;font:18px/1.25 OptimaCyr,Arial,sans-serif}
+.helper-icon{width:30px;height:30px;border:2px solid var(--navy);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--navy);font:19px/1 Arial,sans-serif;font-weight:700;flex:0 0 30px}
+.consent-row{margin-top:auto;padding-top:24px;border-top:1px solid var(--line);display:flex;align-items:center;flex-wrap:wrap;gap:8px 10px;color:#5f6b82;font:17px/1.2 OptimaCyr,Arial,sans-serif}
+.consent-row input{appearance:none;width:28px;height:28px;border:2px solid #aab3c2;border-radius:7px;background:#fff;display:grid;place-items:center;margin:0;flex:0 0 28px}
+.consent-row input:checked{background:var(--navy);border-color:var(--navy)}
+.consent-row input:checked:after{content:"✓";color:#fff;font:bold 19px/1 Arial,sans-serif}
+.consent-row label{font-weight:700;color:var(--navy)}
+.consent-link{padding:0;border:0;background:transparent;color:var(--red);font:17px/1.2 OptimaCyr,Arial,sans-serif;text-decoration:underline;text-underline-offset:3px}
+
+.keypad-card{padding:22px}
+.keypad-grid{width:100%;height:100%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:12px}
+.key{border:1px solid #d8dce3;border-radius:12px;background:#fff;color:var(--navy);font:42px/1 Molot,Arial,sans-serif;box-shadow:0 5px 12px rgba(16,38,80,.07);transition:transform .06s ease,background .06s ease}
+.key:active{transform:scale(.975);background:#f4f5f8}
+.key-clear{background:#fff4f3;color:var(--red);border-color:#f2c7c8}
+.key-back{display:grid;place-items:center}
+.key-back svg{width:42px;height:42px;fill:none;stroke:var(--navy);stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+
+.phone-actions{position:relative;z-index:2;display:grid;grid-template-columns:240px 1fr;gap:18px}
+.action-back,.action-next{height:74px;border-radius:12px;font:26px/1 Molot,Arial,sans-serif;display:flex;align-items:center;justify-content:center;gap:12px}
+.action-back{border:2px solid var(--navy);background:#fff;color:var(--navy)}
+.action-next{border:0;background:var(--red);color:#fff;box-shadow:0 10px 22px rgba(239,63,67,.22)}
+.action-next:disabled{opacity:.42;filter:grayscale(.15);box-shadow:none}
+.arrow-left,.arrow-right{font:38px/1 Arial,sans-serif;margin-top:-3px}
+
+/* keep legacy policy modal functional, but visually on-brand */
+.phone-v2 #mask{z-index:9000!important}
+.phone-v2 .window{z-index:9001!important;font-family:OptimaCyr,Arial,sans-serif!important;border-radius:14px!important}
+.phone-v2 .modal_button{background:var(--red)!important;color:#fff!important;border-radius:9px!important}
+
+
+/* v25 phone screen polish */
+.phone-card{
+  padding:30px 34px 26px;
+}
+
+.phone-helper{
+  margin-top:20px;
+  font-size:19px;
+}
+
+.phone-benefits{
+  margin-top:22px;
+  padding:20px 22px 18px;
+  border:1px solid #dde2ea;
+  border-radius:14px;
+  background:#f7f8fb;
+}
+
+.phone-benefits-title{
+  margin-bottom:12px;
+  color:var(--navy);
+  font:21px/1 Molot,Arial,sans-serif;
+}
+
+.phone-benefit{
+  position:relative;
+  margin:10px 0;
+  padding-left:28px;
+  color:#5f6b82;
+  font:19px/1.22 OptimaCyr,Arial,sans-serif;
+}
+
+.phone-benefit:before{
+  content:"";
+  position:absolute;
+  left:2px;
+  top:.42em;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--red);
+}
+
+.consent-row{
+  padding-top:20px;
+  font-size:19px;
+}
+
+.consent-link{
+  font-size:19px;
+}
+
+.phone-actions{
+  grid-template-columns:270px 1fr;
+  gap:20px;
+}
+
+.action-back,.action-next{
+  height:78px;
+  font-size:27px;
+}
+
+.action-next:disabled{
+  opacity:.36;
+  filter:grayscale(.25);
+  box-shadow:none;
+  cursor:default;
+}
+
+.keypad-card{
+  padding:20px;
+}
+
+
+/* v26 adjustments */
+.phone-surface{grid-template-rows:124px minmax(0,1fr) 96px;}
+.phone-heading{align-items:flex-start;}
+.phone-heading h1{font-size:50px;line-height:1;}
+.phone-heading p{margin:4px 0 0;font-size:0;line-height:0;min-height:0;}
+.phone-heading p:empty{display:none;}
+.phone-heading-art{width:170px;height:96px;flex:0 0 170px;justify-content:flex-end;}
+.phone-art-card{position:relative;width:108px;height:88px;display:flex;align-items:center;justify-content:center;}
+.phone-icon-box{position:relative;z-index:2;width:82px;height:82px;border-radius:18px;background:linear-gradient(180deg,#ffffff 0%,#fbfbfd 100%);box-shadow:0 14px 28px rgba(16,38,80,.11);display:grid;place-items:center;}
+.phone-icon-box svg{width:46px;height:46px;stroke:var(--red);stroke-width:2.45;}
+.phone-heading-stripes{position:absolute;width:44px;right:-1px;top:29px;opacity:.72;}
+.phone-content{grid-template-columns:minmax(0,1fr) 466px;gap:20px;}
+.keypad-card{padding:16px;}
+.keypad-grid{gap:10px;}
+.key{font-size:48px;border-radius:13px;}
+.phone-card{padding:28px 30px 22px;}
+.phone-display{min-height:132px;}
+.phone-benefits{margin-top:18px;}
+.phone-helper{margin-top:18px;}
+.phone-card-label{margin-bottom:18px;}
+.action-back,.action-next{height:76px;}
+
+
+/* v27 icon cleanup */
+.phone-heading-art{width:156px;height:96px;flex:0 0 156px;justify-content:flex-end;align-items:flex-start;}
+.phone-art-card{position:relative;width:96px;height:96px;display:flex;align-items:flex-start;justify-content:flex-start;}
+.phone-icon-box-clean{width:84px;height:84px;border-radius:22px;background:#fff;box-shadow:0 12px 26px rgba(16,38,80,.10);}
+.phone-icon-box-clean svg{width:40px;height:40px;fill:none;stroke:var(--red);stroke-width:3.3;stroke-linecap:round;stroke-linejoin:round;transform:none;}
+.phone-heading-stripes{width:30px;right:0;top:auto;bottom:10px;opacity:.58;}
+
+
+/* v28: use original Superman brand elements supplied by user */
+.brand-heading-art{
+  position:relative;
+  width:150px;
+  height:96px;
+  flex:0 0 150px;
+  display:block;
+}
+.brand-heading-comb{
+  position:absolute;
+  width:78px;
+  height:78px;
+  object-fit:contain;
+  right:34px;
+  top:8px;
+  transform:rotate(-8deg);
+}
+.brand-heading-corner{
+  position:absolute;
+  width:48px;
+  height:auto;
+  object-fit:contain;
+  right:0;
+  top:0;
+  opacity:.95;
+}
+.phone-heading-art .phone-art-card,
+.phone-heading-art .phone-icon-box,
+.phone-heading-art .phone-heading-stripes{
+  display:none!important;
+}
+
+
+/* v29: final ergonomics pass for phone input screen */
+
+/* User-supplied brand elements: larger and visually intentional */
+.brand-heading-art{
+  width:190px;
+  height:112px;
+  flex:0 0 190px;
+}
+.brand-heading-comb{
+  width:104px;
+  height:104px;
+  right:42px;
+  top:5px;
+  transform:rotate(-8deg);
+}
+.brand-heading-corner{
+  width:66px;
+  right:0;
+  top:0;
+}
+
+/* Left card: remove duplicated helper and use the space for useful content */
+.phone-card{
+  padding:28px 30px 24px;
+}
+.phone-card-label{
+  margin-bottom:18px;
+}
+.phone-display{
+  min-height:138px;
+}
+
+.phone-benefits{
+  flex:1 1 auto;
+  min-height:230px;
+  margin-top:24px;
+  padding:26px 28px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border-radius:16px;
+}
+.phone-benefits-title{
+  margin-bottom:18px;
+  font-size:25px;
+}
+.phone-benefit{
+  margin:13px 0;
+  padding-left:34px;
+  font-size:21px;
+  line-height:1.25;
+}
+.phone-benefit:before{
+  left:3px;
+  top:.43em;
+  width:12px;
+  height:12px;
+}
+
+/* Consent is deliberately larger for a touch terminal */
+.consent-row{
+  margin-top:22px;
+  padding-top:22px;
+  gap:10px 12px;
+  font-size:21px;
+}
+.consent-row input{
+  width:32px;
+  height:32px;
+  flex-basis:32px;
+  border-radius:8px;
+}
+.consent-row input:checked:after{
+  font-size:22px;
+}
+.consent-row label{
+  font-size:21px;
+}
+.consent-link{
+  font-size:21px;
+}
+
+/* Keep keypad large and finger-friendly */
+.keypad-card{
+  padding:16px;
+}
+.keypad-grid{
+  gap:10px;
+}
+.key{
+  min-width:0;
+  min-height:0;
+  font-size:50px;
+  border-radius:14px;
+}
+
+
+/* v30: slightly larger user-supplied brand decorations */
+.brand-heading-art{
+  width:220px;
+  height:132px;
+  flex:0 0 220px;
+}
+
+.brand-heading-comb{
+  width:126px;
+  height:126px;
+  right:48px;
+  top:4px;
+}
+
+.brand-heading-corner{
+  width:82px;
+  right:0;
+  top:0;
+}
+
+
+/* v31: rebuilt top-right brand composition from user's original assets */
+.brand-heading-art-v31{
+  position:relative;
+  width:236px;
+  height:124px;
+  flex:0 0 236px;
+  overflow:visible;
+}
+
+/* hide previous v28-v30 decorations in this composition */
+.brand-heading-art-v31 .brand-heading-comb,
+.brand-heading-art-v31 .brand-heading-corner{
+  display:none!important;
+}
+
+.brand-heading-corner-v31{
+  position:absolute;
+  width:78px;
+  height:auto;
+  right:0;
+  top:-8px;
+  object-fit:contain;
+  z-index:1;
+}
+
+.brand-heading-comb-v31{
+  position:absolute;
+  width:116px;
+  height:auto;
+  right:42px;
+  top:24px;
+  object-fit:contain;
+  z-index:3;
+  filter:drop-shadow(0 5px 6px rgba(20,44,93,.08));
+}
+
+.brand-heading-razor-v31{
+  position:absolute;
+  width:76px;
+  height:auto;
+  right:128px;
+  top:37px;
+  object-fit:contain;
+  z-index:2;
+  transform:rotate(-11deg);
+  opacity:.96;
+}
+
+
+/* v32: remove top-right decorative composition entirely */
+.phone-heading{
+  justify-content:flex-start;
+}
+.phone-heading-copy{
+  width:100%;
+}
+.brand-heading-art,
+.brand-heading-art-v31{
+  display:none!important;
+}

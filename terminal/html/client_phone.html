@@ -5,9 +5,36 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Client phone</title>
+<script>
+(function () {
+  var BASE_W = 1280;
+  var BASE_H = 1024;
+  function calculateTerminalScale() {
+    var vw = window.innerWidth || document.documentElement.clientWidth || BASE_W;
+    var vh = window.innerHeight || document.documentElement.clientHeight || BASE_H;
+    var scale = Math.min(vw / BASE_W, vh / BASE_H);
+    if (Math.abs(vw - BASE_W) <= 2 && Math.abs(vh - BASE_H) <= 2) scale = 1;
+    if (!isFinite(scale) || scale <= 0) scale = 1;
+    return scale;
+  }
+  function applyTerminalScale() {
+    var scale = calculateTerminalScale();
+    var root = document.documentElement;
+    root.style.setProperty('--terminal-scale', scale.toFixed(4));
+    root.style.setProperty('--terminal-shell-width', (BASE_W * scale).toFixed(2) + 'px');
+    root.style.setProperty('--terminal-shell-height', (BASE_H * scale).toFixed(2) + 'px');
+    root.classList.add('terminal-scale-ready');
+  }
+  window.fitTerminalStage = applyTerminalScale;
+  applyTerminalScale();
+  window.addEventListener('resize', applyTerminalScale);
+  window.addEventListener('orientationchange', applyTerminalScale);
+})();
+</script>
 
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" href="css/modal-win.css" />
+<link href="css/phone-v2.css" rel="stylesheet" type="text/css">
 
 <script src="../src/resources/services.cfg"></script>
 <script src="../dist/services.cfg"></script>
@@ -56,6 +83,7 @@
 				document.getElementById('num_' + i).innerHTML = str.substring(i-1, i);			
 			}
 		}
+        updateNextState();
 	}
 	
 	function init(info) {
@@ -77,7 +105,7 @@
 
         } else {
             document.getElementById('phone_label_1').innerHTML = 'ВВЕДИТЕ НОМЕР ТЕЛЕФОНА';
-            document.getElementById('phone_label_2').innerHTML = 'ДЛЯ ВОЗМОЖНОСТИ ОБРАТНОЙ СВЯЗИ';
+            document.getElementById('phone_label_2').innerHTML = '';
             document.getElementById('phone_label_3').innerHTML = '';
         }
 
@@ -164,6 +192,18 @@
     }
 
 	
+    function updateNextState() {
+        var complete = true;
+        for (var i = 2; i <= 11; i++) {
+            if (document.getElementById('num_' + i).innerHTML == '') {
+                complete = false;
+                break;
+            }
+        }
+        var consent = $('#chck_person_data').prop('checked');
+        $("#btn_next").prop('disabled', !(complete && consent));
+    }
+
 	function addNum(number) {
 		
 		var index = 11;
@@ -176,11 +216,7 @@
 			}
 		}
 		
-		if (index == 11) {
-            $("#btn_next").prop('disabled', false);
-		} else {
-            $("#btn_next").prop('disabled', true);
-		}
+        updateNextState();
 	}
 	
 	function delNum() {
@@ -200,11 +236,7 @@
 			document.getElementById('num_' + index).innerHTML = '';	
 		}
 		
-		if (index <= 2) {
-            $("#btn_next").prop('disabled', false);
-		} else {
-            $("#btn_next").prop('disabled', true);
-		}
+        updateNextState();
 	}
 	
 	
@@ -213,104 +245,94 @@
 			document.getElementById('num_' + i).innerHTML = '';			
 		}
 		
-        $("#btn_next").prop('disabled', false);
+        updateNextState();
 	}
 	
 </script>
 
 </head>
-<body onload="initPage(); DispatcherWebSocket();">
-<div class="logo"></div>
-<div class="container">
-   <div class="tiket tel1">
-     <st3 id="phone_label_1">ВВЕДИТЕ НОМЕР ТЕЛЕФОНА, ЧТОБЫ</st3>
-     <st3 id="phone_label_2">ПОЛУЧИТЬ БЕСПЛАТНУЮ СТРИЖКУ!</st3>
-     <st3 class="comment" id="phone_label_3">*Условия уточняйте у мастеров</st3>
-   </div>
-   <div class="center4"> 
-       <div class="numbox"><numtext id="num_1">+7</numtext></div>
-       <div class="point">(</div>
-       <div class="numbox"><numtext id="num_2"></numtext></div>
-       <div class="numbox"><numtext id="num_3"></numtext></div>
-       <div class="numbox"><numtext id="num_4"></numtext></div>
-       <div class="point">)</div>
-       <div class="numbox"><numtext id="num_5"></numtext></div>
-       <div class="numbox"><numtext id="num_6"></numtext></div>
-       <div class="numbox"><numtext id="num_7"></numtext></div>
-       <div class="point">-</div>
-       <div class="numbox"><numtext id="num_8"></numtext></div>
-       <div class="numbox"><numtext id="num_9"></numtext></div>
-       <div class="point">-</div>
-       <div class="numbox"><numtext id="num_10"></numtext></div>
-       <div class="numbox"><numtext id="num_11"></numtext></div>
-   </div>
-   <div class="numfooter">
-     <div class="numfooter_panel">
-         <div class="numfooter_panel_head"></div>
-         <button class="thumb1 left" onclick="document.location.href = 'index.html';"><div class="thumb1text gtv">НАЗАД</div></button>
-     </div>
 
-     <div class="tel">
-   	 <table>
-   	 	<tr>
-		 <td>
-			<button class="thumb1" onclick="addNum(1);"/><div class="thumb1text">1</div>
-		 </td>
-         <td>
-			<button class="thumb1" onclick="addNum(2);"/><div class="thumb1text">2</div>
-		 </td>
-         <td>
-			<button class="thumb1" onclick="addNum(3);"/><div class="thumb1text">3</div>
-		 </td>
-	   </tr>
-	   <tr>
-		 <td>
-			<button class="thumb1" onclick="addNum(4);"/><div class="thumb1text">4</div>
-		 </td>
-         <td>
-			<button class="thumb1" onclick="addNum(5);"/><div class="thumb1text">5</div>
-		 </td>
-         <td>
-			<button class="thumb1" onclick="addNum(6);"/><div class="thumb1text">6</div>
-		 </td>
-       </tr>
-       <tr>
-		 <td>
-			<button class="thumb1" onclick="addNum(7);"/><div class="thumb1text">7</div>
-		 </td>
-         <td>
-			<button class="thumb1" onclick="addNum(8);"/><div class="thumb1text">8</div>
-		 </td>
-         <td>
-			<button class="thumb1" onclick="addNum(9);"/><div class="thumb1text">9</div>
-		 </td>
-	     </tr>
-	   <tr>
-		 <td>
-			<button class="thumb1" onclick="clearNumber();"/><div class="thumb1text">C</div>
-		 </td>
-         <td>
-			<button class="thumb1" onclick="addNum(0);"/><div class="thumb1text">0</div>
-		 </td>
-         <td>
-			<button class="thumb1" onclick="delNum();"/><div class="thumb1text"><</div>
-		 </td>
-	   </tr>
-   	 </table>
-     </div>
-     <div class="numfooter_panel">
-       <div class="numfooter_panel_head">
-           <div class="checkbox">
-               <input type="checkbox" id="chck_person_data" checked/>
-               <label class="personal_data" onclick="$('#chck_person_data').prop('checked', !$('#chck_person_data').is(':checked'));">Согласен с условиями</label>
-               <span class="personal_data_ref border_bottom_dashed" onclick="openModal('#personal_data_dialog')">пользовательского соглашения</span>
-           </div>
+<body class="phone-v2" onload="initPage(); DispatcherWebSocket(); fitTerminalStage();">
+  <div class="terminal-shell">
+    <div class="terminal-stage">
+      <main class="phone-app">
+        <section class="phone-surface">
+          <div class="phone-heading">
+            <div class="phone-heading-copy">
+              <div class="eyebrow">ВАШ НОМЕР</div>
+              <h1 id="phone_label_1">ВВЕДИТЕ НОМЕР ТЕЛЕФОНА</h1>
+              <p id="phone_label_2"></p>
+              <div class="phone-note" id="phone_label_3"></div>
+            </div>
+          </div>
+<div class="phone-content">
+            <section class="phone-card">
+              <div class="phone-card-label">НОМЕР ТЕЛЕФОНА</div>
+              <div class="phone-display" aria-label="Номер телефона">
+                <span class="country" id="num_1">+7</span>
+                <span class="sep">(</span>
+                <span class="digit" id="num_2"></span>
+                <span class="digit" id="num_3"></span>
+                <span class="digit" id="num_4"></span>
+                <span class="sep">)</span>
+                <span class="digit" id="num_5"></span>
+                <span class="digit" id="num_6"></span>
+                <span class="digit" id="num_7"></span>
+                <span class="sep dash">–</span>
+                <span class="digit" id="num_8"></span>
+                <span class="digit" id="num_9"></span>
+                <span class="sep dash">–</span>
+                <span class="digit" id="num_10"></span>
+                <span class="digit" id="num_11"></span>
+              </div>
 
-       </div>
-       <button class="thumb1 right" id="btn_next" onclick='next();'/><div class="thumb1text gtv">ДАЛЕЕ</div>
+<div class="phone-benefits">
+                <div class="phone-benefits-title">ЗАЧЕМ НУЖЕН НОМЕР?</div>
+                <div class="phone-benefit">Начислим бонусы</div>
+                <div class="phone-benefit">Найдём вашу историю посещений</div>
+                <div class="phone-benefit">Сможем связаться при необходимости</div>
+              </div>
+
+              <div class="consent-row">
+                <input type="checkbox" id="chck_person_data" checked onchange="updateNextState();">
+                <label for="chck_person_data">Согласен с условиями</label>
+                <button type="button" class="consent-link" onclick="openModal('#personal_data_dialog')">пользовательского соглашения</button>
+              </div>
+            </section>
+
+            <section class="keypad-card" aria-label="Клавиатура">
+              <div class="keypad-grid">
+                <button class="key" onclick="addNum(1);">1</button>
+                <button class="key" onclick="addNum(2);">2</button>
+                <button class="key" onclick="addNum(3);">3</button>
+                <button class="key" onclick="addNum(4);">4</button>
+                <button class="key" onclick="addNum(5);">5</button>
+                <button class="key" onclick="addNum(6);">6</button>
+                <button class="key" onclick="addNum(7);">7</button>
+                <button class="key" onclick="addNum(8);">8</button>
+                <button class="key" onclick="addNum(9);">9</button>
+                <button class="key key-clear" onclick="clearNumber();">C</button>
+                <button class="key" onclick="addNum(0);">0</button>
+                <button class="key key-back" onclick="delNum();" aria-label="Удалить цифру">
+                  <svg viewBox="0 0 40 40"><path d="M14 10h19v20H14L5 20l9-10Z"/><path d="m20 15 8 10M28 15l-8 10"/></svg>
+                </button>
+              </div>
+            </section>
+          </div>
+
+          <footer class="phone-actions">
+            <button class="action-back" onclick="document.location.href='index.html';">
+              <span class="arrow-left">‹</span> НАЗАД
+            </button>
+            <button class="action-next" id="btn_next" onclick="next();" disabled>
+              ДАЛЕЕ <span class="arrow-right">›</span>
+            </button>
+          </footer>
+        </section>
+      </main>
     </div>
-   </div>
-</div>
+  </div>
+
 
 <!-- modal window -->
 <div id="boxes">

@@ -112,3 +112,27 @@ html,body{overflow:hidden}
   top:156px;
   opacity:.26;
 }
+
+
+/* v34: main screen corrections */
+
+.terminal-app{padding:14px 16px 16px;background:var(--navy);display:grid;grid-template-rows:118px minmax(0,1fr);gap:14px;overflow:hidden}
+.terminal-header{display:grid;grid-template-columns:180px minmax(0,1fr);align-items:center;justify-content:stretch;padding:0 8px 0 18px;gap:18px;overflow:hidden}
+.terminal-header:after{display:none}
+.brand-button{position:relative;left:auto;top:auto;transform:none;width:178px;height:94px;justify-content:flex-start}
+.brand-button img{width:166px;height:90px;object-fit:contain;object-position:left center}
+.header-actions{margin-left:0;display:grid;grid-template-columns:1fr 0.78fr 1.18fr;gap:16px;width:100%;justify-content:stretch}
+.header-action{width:100%;min-width:0;height:84px;padding:10px 18px;border-radius:14px;font-size:21px}
+.header-action:last-child{min-width:0}
+.header-action-label{display:block;overflow:hidden;text-overflow:ellipsis}
+.services-surface{padding:26px 24px 22px;grid-template-rows:96px minmax(0,1fr)}
+.services-heading{min-height:96px;justify-content:flex-start}
+.heading-art{display:none}
+.service-card-body{padding:18px 22px 20px}
+.service-copy h2{margin:0 0 10px;padding-right:34px;font:48px/.98 Molot,Arial,sans-serif;white-space:nowrap}
+.service-copy p{margin:0;max-width:100%;color:#657088;font:22px/1.16 OptimaCyr,Arial,sans-serif}
+.service-meta{margin-top:auto;padding-top:22px}
+.service-card-hint{display:none}
+.service-chip{position:absolute;z-index:5;right:18px;top:18px;padding:9px 14px 8px;border-radius:8px;color:#fff;font:16px/1 Molot,Arial,sans-serif;letter-spacing:.2px}
+.service-chip.hit{background:var(--red)}
+#haircut_e .service-card-body .corner-stripes{display:none}

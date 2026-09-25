@@ -128,14 +128,47 @@
 
             if (isMarket) {
                 goNext();
+                return;
             }
 
-            reqClientInfo(number);
+            requestClientInfoOrContinue(number);
 		}
 		else {
 		    goNext();
         }
   	}
+
+    function requestClientInfoOrContinue(number) {
+        // На рабочем терминале сохраняем штатную логику через локальный Dispatcher.
+        if (typeof ws !== 'undefined' && ws && ws.readyState === WebSocket.OPEN) {
+            reqClientInfo(number);
+            return;
+        }
+
+        // Если WebSocket ещё подключается, даём ему короткое время открыться.
+        if (typeof ws !== 'undefined' && ws && ws.readyState === WebSocket.CONNECTING) {
+            var attempts = 0;
+            var waitForDispatcher = setInterval(function () {
+                attempts++;
+
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    clearInterval(waitForDispatcher);
+                    reqClientInfo(number);
+                    return;
+                }
+
+                if (!ws || ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING || attempts >= 6) {
+                    clearInterval(waitForDispatcher);
+                    goNext();
+                }
+            }, 100);
+            return;
+        }
+
+        // GitHub Pages / локальный HTML-просмотр: Dispatcher недоступен,
+        // поэтому позволяем пройти по прототипу на следующий экран.
+        goNext();
+    }
 
     function handleReqClientInfo(info) {
 

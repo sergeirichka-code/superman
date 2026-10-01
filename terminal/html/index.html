@@ -116,10 +116,10 @@
   <main class="terminal-app">
     <header class="terminal-header">
       <button class="brand-button" ondblclick="openModal('#staff_pin_dialog');" aria-label="СУПЕРМЕН">
-        <img src="images/logo-v2.png" alt="СУПЕРМЕН — мужские стрижки">
+        <img src="images/logo-main.svg" alt="СУПЕРМЕН — мужские стрижки">
       </button>
 
-      <nav class="header-actions" aria-label="Разделы">
+      <nav class="header-actions header-actions-v43" aria-label="Разделы">
         <button class="header-action" onclick='document.location.href = "extras.html";'>
           <span class="header-action-icon" aria-hidden="true">
             <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10"/><path d="M16 10v12M10 16h12"/></svg>
@@ -132,12 +132,6 @@
           </span>
           <span class="header-action-label">Акции</span>
         </button>
-        <button class="header-action" onclick='document.location.href = "market.html";'>
-          <span class="header-action-icon market-icon" aria-hidden="true">
-            <svg viewBox="0 0 32 32"><path d="M8 11h16l-1.8 12.5H9.8L8 11Z"/><path d="M12 11V8.7A4.3 4.3 0 0 1 16.3 4.4h-.6A4.3 4.3 0 0 1 20 8.7V11"/></svg>
-          </span>
-          <span class="header-action-label">Наш Супермаркет</span>
-        </button>
       </nav>
     </header>
 
@@ -148,61 +142,41 @@
         <img class="surface-decor-comb" src="images/decor-comb.png" alt="">
         <img class="surface-decor-stripes" src="images/decor-stripes-red.png" alt="">
       </div>
-      <div class="services-heading">
-        <div>
-          <h1>УСЛУГИ</h1>
-          <p>Выбери вариант стрижки</p>
-        </div>
-
-      </div>
 
       <div class="service-grid">
         <button class="service-card" id="haircut_a" onclick='openService("a")'>
           <div class="service-image-wrap">
-            <span class="service-badge blue">МАШИНКОЙ</span>
-            <span class="decor-dots"></span>
             <img src="images/service-clipper.png" alt="Под насадку">
           </div>
-          <div class="service-card-body">
-            <div class="service-copy">
-              <h2 id="haircut_a_name"></h2>
-              <p>Машинкой, без перехода</p>
-            </div>
-                        <div class="service-meta">
-              <span class="service-select-label">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
-                Выбрать
-              </span>
-              <strong><span id="haircut_a_cost">0</span> <span class="rub">₽</span></strong>
-            </div>
-            <span class="card-arrow">›</span>
+          <div class="service-info-strip">
+            <h2 id="haircut_a_name"></h2>
+            <strong><span id="haircut_a_cost">0</span> <span class="rub">₽</span></strong>
+            <p class="service-description">Короткая стрижка машинкой</p>
           </div>
         </button>
 
         <button class="service-card" id="haircut_e" onclick='openService("e")'>
           <div class="service-image-wrap">
-            <span class="service-badge red">С ПЕРЕХОДОМ</span>
             <span class="service-chip hit">ХИТ</span>
             <img src="images/service-haircut.png" alt="Стрижка">
           </div>
-          <div class="service-card-body">
-            <span class="corner-stripes"></span>
-            <div class="service-copy">
-              <h2 id="haircut_e_name"></h2>
-              <p>Любая форма, с переходом</p>
-            </div>
-                        <div class="service-meta">
-              <span class="service-select-label">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg>
-                Выбрать
-              </span>
-              <strong><span id="haircut_e_cost">0</span> <span class="rub">₽</span></strong>
-            </div>
-            <span class="card-arrow">›</span>
+          <div class="service-info-strip">
+            <h2 id="haircut_e_name"></h2>
+            <strong><span id="haircut_e_cost">0</span> <span class="rub">₽</span></strong>
+            <p class="service-description">Любая форма с плавным переходом</p>
           </div>
         </button>
       </div>
     </section>
+
+    <footer class="market-footer">
+      <button class="market-footer-button" onclick='document.location.href = "market.html";'>
+        <span class="header-action-icon market-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><path d="M8 11h16l-1.8 12.5H9.8L8 11Z"/><path d="M12 11V8.7A4.3 4.3 0 0 1 16.3 4.4h-.6A4.3 4.3 0 0 1 20 8.7V11"/></svg>
+        </span>
+        <span class="market-footer-label">Наш Супермаркет</span>
+      </button>
+    </footer>
   </main>
   </div>
   </div>

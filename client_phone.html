@@ -292,15 +292,23 @@
         <section class="phone-surface">
           <div class="phone-heading">
             <div class="phone-heading-copy">
-              <div class="eyebrow">ВАШ НОМЕР</div>
-              <h1 id="phone_label_1">ВВЕДИТЕ НОМЕР ТЕЛЕФОНА</h1>
+              <span class="phone-title-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M9 4h14v24H9z"/><path d="M14 24h4"/></svg></span>
+              <h1 id="phone_label_1">ТЕЛЕФОН</h1>
               <p id="phone_label_2"></p>
               <div class="phone-note" id="phone_label_3"></div>
             </div>
           </div>
+<section class="phone-reasons" aria-label="Зачем нужен номер">
+            <h2>ЗАЧЕМ НУЖЕН НОМЕР?</h2>
+            <ul>
+              <li>Начислим бонусы</li>
+              <li>Найдём вашу историю посещений</li>
+              <li>Свяжемся с вами, если вы забудете вещи</li>
+            </ul>
+          </section>
 <div class="phone-content">
             <section class="phone-card">
-              <div class="phone-card-label">НОМЕР ТЕЛЕФОНА</div>
+              
               <div class="phone-display" aria-label="Номер телефона">
                 <span class="country" id="num_1">+7</span>
                 <span class="sep">(</span>
@@ -319,18 +327,9 @@
                 <span class="digit" id="num_11"></span>
               </div>
 
-<div class="phone-benefits">
-                <div class="phone-benefits-title">ЗАЧЕМ НУЖЕН НОМЕР?</div>
-                <div class="phone-benefit">Начислим бонусы</div>
-                <div class="phone-benefit">Найдём вашу историю посещений</div>
-                <div class="phone-benefit">Сможем связаться при необходимости</div>
-              </div>
 
-              <div class="consent-row">
-                <input type="checkbox" id="chck_person_data" checked onchange="updateNextState();">
-                <label for="chck_person_data">Согласен с условиями</label>
-                <button type="button" class="consent-link" onclick="openModal('#personal_data_dialog')">пользовательского соглашения</button>
-              </div>
+
+
             </section>
 
             <section class="keypad-card" aria-label="Клавиатура">
@@ -353,6 +352,11 @@
             </section>
           </div>
 
+              <div class="consent-row">
+                <input type="checkbox" id="chck_person_data" checked onchange="updateNextState();">
+                <label for="chck_person_data">Согласен с условиями</label>
+                <button type="button" class="consent-link" onclick="openModal('#personal_data_dialog')">пользовательского соглашения</button>
+              </div>
           <footer class="phone-actions">
             <button class="action-back" onclick="document.location.href='index.html';">
               <span class="arrow-left">‹</span> НАЗАД

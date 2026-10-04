@@ -42,3 +42,17 @@ body.actions-v61{display:flex;align-items:center;justify-content:center;cursor:d
 .actions-v61 .promo-card:disabled .promo-symbol{opacity:.65}
 .actions-v61 .promo-small:disabled{background:#cbd2df;border-color:#cbd2df}
 .actions-v61 .promo-card:disabled .promo-unavailable{color:#ef3f43;font-weight:700;opacity:1}
+
+/* v63: three portrait promotions above two secondary offers. */
+.actions-grid{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:520px minmax(0,1fr);gap:20px}
+.promo-illustrated{grid-column:span 2}
+.promo-small{grid-column:span 3}
+.promo-illustrated .promo-art{inset:0 0 auto auto;width:470px;max-width:none;height:315px;object-fit:cover;object-position:right center}
+.promo-illustrated .promo-copy{position:absolute;top:310px;left:0;width:100%;height:160px;padding:18px 24px 0;justify-content:flex-start}
+.promo-illustrated .promo-name{font-size:32px;line-height:1.08;min-height:35px}
+.promo-illustrated .promo-rule{margin:14px 0;width:80px}
+.promo-illustrated .promo-price{font-size:52px}
+.promo-small{padding:24px 32px}
+.promo-small .promo-name{font-size:34px}
+.promo-small .promo-symbol{flex-basis:82px;height:82px;font-size:54px}
+.promo-small .promo-price{font-size:46px}

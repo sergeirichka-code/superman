@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>From where</title>
+<title>Откуда вы о нас узнали — СУПЕРМЕН</title>
 <link href="css/style.css" rel="stylesheet" type="text/css">
 
 <script src="../src/resources/services.cfg"></script>
@@ -65,30 +65,56 @@ function next(item) {
 	
 </script>
 
+<link href="css/from-where-v64.css" rel="stylesheet" type="text/css">
+<script>
+(function () {
+  var BASE_W = 1280;
+  var BASE_H = 1024;
+
+  function calculateTerminalScale() {
+    var vw = window.innerWidth || document.documentElement.clientWidth || BASE_W;
+    var vh = window.innerHeight || document.documentElement.clientHeight || BASE_H;
+
+    // Always fit the complete 1280×1024 terminal inside the visible browser area.
+    // This prevents vertical scrolling and preserves the exact 5:4 proportions.
+    var scale = Math.min(vw / BASE_W, vh / BASE_H);
+
+    // Native terminal remains pixel-perfect 1:1.
+    if (Math.abs(vw - BASE_W) <= 2 && Math.abs(vh - BASE_H) <= 2) {
+      scale = 1;
+    }
+
+    if (!isFinite(scale) || scale <= 0) scale = 1;
+    return scale;
+  }
+
+  function applyTerminalScale() {
+    var scale = calculateTerminalScale();
+    var root = document.documentElement;
+    root.style.setProperty('--terminal-scale', scale.toFixed(4));
+    root.style.setProperty('--terminal-shell-width', (BASE_W * scale).toFixed(2) + 'px');
+    root.style.setProperty('--terminal-shell-height', (BASE_H * scale).toFixed(2) + 'px');
+    root.classList.add('terminal-scale-ready');
+  }
+
+  window.fitTerminalStage = applyTerminalScale;
+  applyTerminalScale();
+  window.addEventListener('resize', applyTerminalScale);
+  window.addEventListener('orientationchange', applyTerminalScale);
+})();
+</script>
 </head>
-<body onload="initView();DispatcherWebSocket();">
-<div class="logo"></div>
-<div class="container">
-   <div class="tiket">
-     <st3>ОТКУДА ВЫ О НАС УЗНАЛИ?</st3>
-   </div>
-   <div class="from_where_panel">
-     <div class="line1">
-       <button class="thumb1" id="fw_1"/><div class="thumb1text" id="fw_1_name"></div>
-       <button class="thumb1" id="fw_2"/><div class="thumb1text" id="fw_2_name"></div>
-       <button class="thumb1" id="fw_3"/><div class="thumb1text" id="fw_3_name"></div>
-     </div>
-     <div class="line1">
-       <button class="thumb1" id="fw_4"/><div class="thumb1text" id="fw_4_name"></div>
-       <button class="thumb1" id="fw_5"/><div class="thumb1text" id="fw_5_name"></div>
-       <button class="thumb1" id="fw_6"/><div class="thumb1text" id="fw_6_name"></div>
-     </div>
-     <div class="line1">
-       <button class="thumb1" id="fw_7"/><div class="thumb1text" id="fw_7_name"></div>
-       <button class="thumb1" id="fw_8"/><div class="thumb1text" id="fw_8_name"></div>
-       <button class="thumb1" id="fw_9"/><div class="thumb1text" id="fw_9_name"></div>
-     </div>
-   </div>
-</div>
-</body>
-</html>
+<body class="from-where-v64" onload="initView();DispatcherWebSocket();fitTerminalStage();">
+<div class="terminal-shell"><div class="terminal-stage"><main class="source-app">
+<header class="source-header"><span class="source-mark" aria-hidden="true">?</span><h1>ОТКУДА ВЫ О НАС УЗНАЛИ?</h1><p>Выберите один вариант</p></header>
+<section class="source-grid" aria-label="Откуда вы о нас узнали"><button class="source-card" id="fw_1"><span class="source-icon source-icon-1" aria-hidden="true"><img src="images/sources/2gis.svg" alt=""></span><span class="source-name" id="fw_1_name"></span><span class="source-arrow" aria-hidden="true">→</span></button>
+<button class="source-card" id="fw_2"><span class="source-icon source-icon-2" aria-hidden="true"><img src="images/sources/vk.webp" alt=""></span><span class="source-name" id="fw_2_name"></span><span class="source-arrow" aria-hidden="true">→</span></button>
+<button class="source-card" id="fw_3"><span class="source-icon source-icon-3" aria-hidden="true"><img src="images/sources/recommendation.svg" alt=""></span><span class="source-name" id="fw_3_name"></span><span class="source-arrow" aria-hidden="true">→</span></button>
+<button class="source-card" id="fw_4"><span class="source-icon source-icon-4" aria-hidden="true"><img src="images/sources/billboard.svg" alt=""></span><span class="source-name" id="fw_4_name"></span><span class="source-arrow" aria-hidden="true">→</span></button>
+<button class="source-card" id="fw_5"><span class="source-icon source-icon-5" aria-hidden="true"><img src="images/sources/walking.svg" alt=""></span><span class="source-name" id="fw_5_name"></span><span class="source-arrow" aria-hidden="true">→</span></button>
+<button class="source-card" id="fw_6"><span class="source-icon source-icon-6" aria-hidden="true"><img src="images/sources/regular.svg" alt=""></span><span class="source-name" id="fw_6_name"></span><span class="source-arrow" aria-hidden="true">→</span></button>
+<button class="source-card" id="fw_7"><span class="source-name" id="fw_7_name"></span><span class="source-arrow" aria-hidden="true">→</span></button>
+<button class="source-card" id="fw_8"><span class="source-name" id="fw_8_name"></span><span class="source-arrow" aria-hidden="true">→</span></button>
+<button class="source-card" id="fw_9"><span class="source-name" id="fw_9_name"></span><span class="source-arrow" aria-hidden="true">→</span></button>
+</section><p class="source-note">Спасибо! Ваш ответ поможет нам стать ближе к вам.</p>
+</main></div></div></body></html>

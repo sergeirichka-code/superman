@@ -92,8 +92,14 @@
   window.addEventListener('orientationchange', applyTerminalScale);
 })();
 </script>
+<script>
+// Prototype preview: show one active promotion without changing service settings.
+function previewActivePromotion() {
+  document.getElementById('action_b').disabled = false;
+}
+</script>
 </head>
-<body class="actions-v61" onload="initView(); DispatcherWebSocket(); fitTerminalStage();">
+<body class="actions-v61" onload="initView(); previewActivePromotion(); DispatcherWebSocket(); fitTerminalStage();">
 <div class="terminal-shell"><div class="terminal-stage"><main class="actions-app">
 <header class="actions-header"><span aria-hidden="true">%</span><h1>АКЦИИ</h1></header>
 <section class="actions-grid" aria-label="Выберите акцию"><button class="promo-card promo-illustrated" id="action_a" onclick='next("a")'><img class="promo-art" src="images/promo-father.svg" alt=""><span class="promo-copy"><span class="promo-name" id="action_a_name"></span><span class="promo-rule"></span><span class="promo-price"><span id="action_a_cost">0</span> <span class="rub">₽</span></span></span><span class="promo-unavailable">Сейчас недоступно</span></button><button class="promo-card promo-illustrated" id="action_b" onclick='next("b")'><img class="promo-art" src="images/promo-father-son.svg" alt=""><span class="promo-copy"><span class="promo-name" id="action_b_name"></span><span class="promo-rule"></span><span class="promo-price"><span id="action_b_cost">0</span> <span class="rub">₽</span></span></span><span class="promo-unavailable">Сейчас недоступно</span></button><button class="promo-card promo-small" id="action_c" onclick='next("c")'><span class="promo-symbol" aria-hidden="true">+</span><span class="promo-copy"><span class="promo-name" id="action_c_name"></span><span class="promo-rule"></span><span class="promo-price"><span id="action_c_cost">0</span> <span class="rub">₽</span></span></span><span class="promo-unavailable">Сейчас недоступно</span></button><button class="promo-card promo-small" id="action_d" onclick='next("d")'><span class="promo-symbol" aria-hidden="true">%</span><span class="promo-copy"><span class="promo-name" id="action_d_name"></span><span class="promo-rule"></span><span class="promo-price"><span id="action_d_cost">0</span> <span class="rub">₽</span></span></span><span class="promo-unavailable">Сейчас недоступно</span></button></section><button class="actions-back" onclick="document.location.href='index.html';"><span aria-hidden="true">‹</span> НАЗАД К ВЫБОРУ СТРИЖЕК</button></main></div></div></body></html>

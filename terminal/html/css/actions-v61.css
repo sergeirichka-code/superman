@@ -34,3 +34,11 @@ body.actions-v61{display:flex;align-items:center;justify-content:center;cursor:d
 .actions-back span{font:44px/1 Arial,sans-serif}
 .actions-v61 button:focus-visible{outline:4px solid #ef3f43;outline-offset:3px}
 .actions-v61 .promo-card:disabled{opacity:.78}
+
+/* v62: keep unavailable notices bright red while dimming card content. */
+.actions-v61 .promo-card:disabled{opacity:1}
+.actions-v61 .promo-card:disabled .promo-art,
+.actions-v61 .promo-card:disabled .promo-copy,
+.actions-v61 .promo-card:disabled .promo-symbol{opacity:.65}
+.actions-v61 .promo-small:disabled{background:#cbd2df;border-color:#cbd2df}
+.actions-v61 .promo-card:disabled .promo-unavailable{color:#ef3f43;font-weight:700;opacity:1}

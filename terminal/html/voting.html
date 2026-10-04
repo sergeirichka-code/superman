@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Voting</title>
+<title>Оценка визита — СУПЕРМЕН</title>
 
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <link href="css/rateit.css" rel="stylesheet" type="text/css" />
@@ -84,42 +84,45 @@ function handleStaffPostsListRequest(result) {
 
 </script>
 
+<link href="css/voting-v66.css" rel="stylesheet" type="text/css">
+<script>
+(function () {
+  var BASE_W = 1280;
+  var BASE_H = 1024;
+
+  function calculateTerminalScale() {
+    var vw = window.innerWidth || document.documentElement.clientWidth || BASE_W;
+    var vh = window.innerHeight || document.documentElement.clientHeight || BASE_H;
+
+    // Always fit the complete 1280×1024 terminal inside the visible browser area.
+    // This prevents vertical scrolling and preserves the exact 5:4 proportions.
+    var scale = Math.min(vw / BASE_W, vh / BASE_H);
+
+    // Native terminal remains pixel-perfect 1:1.
+    if (Math.abs(vw - BASE_W) <= 2 && Math.abs(vh - BASE_H) <= 2) {
+      scale = 1;
+    }
+
+    if (!isFinite(scale) || scale <= 0) scale = 1;
+    return scale;
+  }
+
+  function applyTerminalScale() {
+    var scale = calculateTerminalScale();
+    var root = document.documentElement;
+    root.style.setProperty('--terminal-scale', scale.toFixed(4));
+    root.style.setProperty('--terminal-shell-width', (BASE_W * scale).toFixed(2) + 'px');
+    root.style.setProperty('--terminal-shell-height', (BASE_H * scale).toFixed(2) + 'px');
+    root.classList.add('terminal-scale-ready');
+  }
+
+  window.fitTerminalStage = applyTerminalScale;
+  applyTerminalScale();
+  window.addEventListener('resize', applyTerminalScale);
+  window.addEventListener('orientationchange', applyTerminalScale);
+})();
+</script>
 </head>
-<body onload="DispatcherWebSocket();">
-<div class="logo"></div>
-<div class="container">
-   <div class="tiket">
-     <st3 class="red">ВЫБЕРИТЕ НОМЕР МАСТЕРА, У КОТОРОГО</st3>
-     <st3 class="red">ВЫ ОБСЛУЖИВАЛИСЬ</st3>
-   </div>
-   <div class="line1">
-        <button class="thumb1 pl1" id="post_1" onclick='select_post(1);' ><div class="thumb1text">1</div></button>
-        <button class="thumb1 pl1" id="post_2" onclick='select_post(2);' ><div class="thumb1text">2</div></button>
-        <button class="thumb1 pl1" id="post_3" onclick='select_post(3);' ><div class="thumb1text">3</div></button>
-        <button class="thumb1 pl1" id="post_4" onclick='select_post(4);' ><div class="thumb1text">4</div></button>
-   </div>
-   <div class="line1">
-        <button class="thumb1 pl1" id="post_5" onclick='select_post(5);' ><div class="thumb1text">5</div></button>
-        <button class="thumb1 pl1" id="post_6" onclick='select_post(6);' disabled=""><div class="thumb1text">6</div></button>
-        <button class="thumb1 pl1" id="post_7" onclick='select_post(7);' disabled=""><div class="thumb1text">7</div></button>
-        <button class="thumb1 pl1" id="post_8" onclick='select_post(8);' disabled=""><div class="thumb1text">8</div></button>
-    </div>
-    <div class="tiket">
-        <br/>
-    </div>
-    <div class="line1">
-        <st3 class="red">ОЦЕНИТЕ ВАШ ВИЗИТ</st3>
-    </div>
-   <div class="line1">
-	   <div class="vote voting_star" id="voting_1" onclick="select_vote(1);"><div class="voting_tip">1</div></div>
-	   <div class="vote voting_star" id="voting_2" onclick="select_vote(2);"><div class="voting_tip">2</div></div>
-	   <div class="vote voting_star" id="voting_3" onclick="select_vote(3);"><div class="voting_tip">3</div></div>
-	   <div class="vote voting_star" id="voting_4" onclick="select_vote(4);"><div class="voting_tip">4</div></div>
-	   <div class="vote voting_star" id="voting_5" onclick="select_vote(5);"><div class="voting_tip">5</div></div>
-
-       <button class="thumb1 vote_next_btn" id="btn_next" onclick="next();" disabled="true"><div id="btn_next_label" class="thumb1text gtv">далее</div></button>
-   </div>
-
-</div>
-</body>
-</html>
+<body class="voting-v66" onload="DispatcherWebSocket();fitTerminalStage();">
+<div class="terminal-shell"><div class="terminal-stage"><main class="rating-app">
+<section class="rating-panel" aria-labelledby="rating-heading"><h1 id="rating-heading">ОЦЕНИТЕ ВАШ ВИЗИТ</h1><p>Нажмите на звезду, чтобы поставить оценку</p><div class="rating-stars" role="group" aria-label="Оценка визита"><button class="voting_star" id="voting_1" onclick="select_vote(1);" aria-label="Оценка 1 из 5"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 7 63 34 93 38 71 59 76 90 50 75 24 90 29 59 7 38 37 34Z"/></svg><span>1</span></button><button class="voting_star" id="voting_2" onclick="select_vote(2);" aria-label="Оценка 2 из 5"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 7 63 34 93 38 71 59 76 90 50 75 24 90 29 59 7 38 37 34Z"/></svg><span>2</span></button><button class="voting_star" id="voting_3" onclick="select_vote(3);" aria-label="Оценка 3 из 5"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 7 63 34 93 38 71 59 76 90 50 75 24 90 29 59 7 38 37 34Z"/></svg><span>3</span></button><button class="voting_star" id="voting_4" onclick="select_vote(4);" aria-label="Оценка 4 из 5"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 7 63 34 93 38 71 59 76 90 50 75 24 90 29 59 7 38 37 34Z"/></svg><span>4</span></button><button class="voting_star" id="voting_5" onclick="select_vote(5);" aria-label="Оценка 5 из 5"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 7 63 34 93 38 71 59 76 90 50 75 24 90 29 59 7 38 37 34Z"/></svg><span>5</span></button></div></section><section class="master-panel" aria-labelledby="master-heading"><header><h2 id="master-heading">ВЫБЕРИТЕ НОМЕР МАСТЕРА</h2><p>У которого вы обслуживались</p></header><div class="master-grid"><button class="thumb1 master-card" id="post_1" onclick="select_post(1);" aria-label="Мастер номер 1"><span class="master-number">1</span><span class="master-check" aria-hidden="true">✓</span></button><button class="thumb1 master-card" id="post_2" onclick="select_post(2);" aria-label="Мастер номер 2"><span class="master-number">2</span><span class="master-check" aria-hidden="true">✓</span></button><button class="thumb1 master-card" id="post_3" onclick="select_post(3);" aria-label="Мастер номер 3"><span class="master-number">3</span><span class="master-check" aria-hidden="true">✓</span></button><button class="thumb1 master-card" id="post_4" onclick="select_post(4);" aria-label="Мастер номер 4"><span class="master-number">4</span><span class="master-check" aria-hidden="true">✓</span></button><button class="thumb1 master-card" id="post_5" onclick="select_post(5);" aria-label="Мастер номер 5"><span class="master-number">5</span><span class="master-check" aria-hidden="true">✓</span></button><button class="thumb1 master-card" id="post_6" onclick="select_post(6);" disabled aria-label="Мастер номер 6"><span class="master-number">6</span><span class="master-check" aria-hidden="true">✓</span></button><button class="thumb1 master-card" id="post_7" onclick="select_post(7);" disabled aria-label="Мастер номер 7"><span class="master-number">7</span><span class="master-check" aria-hidden="true">✓</span></button><button class="thumb1 master-card" id="post_8" onclick="select_post(8);" disabled aria-label="Мастер номер 8"><span class="master-number">8</span><span class="master-check" aria-hidden="true">✓</span></button></div></section><footer class="rating-footer"><p>Выберите оценку и номер мастера</p><button id="btn_next" onclick="next();" disabled><span id="btn_next_label">ДАЛЕЕ</span><span aria-hidden="true">→</span></button></footer></main></div></div></body></html>

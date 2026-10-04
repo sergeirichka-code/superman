@@ -1,0 +1,39 @@
+
+:root{--navy:#142c5d;--red:#ef3f43;--terminal-scale:1;--terminal-shell-width:1280px;--terminal-shell-height:1024px}
+html,body.extras-v58{width:100%;height:100%;margin:0;overflow:hidden;background:var(--navy)}
+body.extras-v58{display:flex;align-items:center;justify-content:center;cursor:default;font-family:OptimaCyr,Arial,sans-serif;color:var(--navy);touch-action:manipulation}
+.extras-v58 *{box-sizing:border-box}
+.extras-v58 button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.terminal-shell{width:var(--terminal-shell-width);height:var(--terminal-shell-height);position:relative;overflow:hidden;flex:0 0 auto}
+.terminal-stage{width:1280px;height:1024px;transform:scale(var(--terminal-scale));transform-origin:top left}
+.extras-app{width:1280px;height:1024px;padding:32px 76px 18px;display:grid;grid-template-rows:100px minmax(0,1fr) 90px;gap:16px}
+.extras-header{background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:16px}
+.extras-header h1{margin:0;font:44px/1 Molot,Arial,sans-serif;font-weight:400}
+.extras-title-icon{width:58px;height:58px;background:var(--red);border-radius:13px;display:grid;place-items:center}
+.extras-title-icon svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2}
+.extras-grid{min-height:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:14px}
+.extra-card{min-width:0;min-height:0;padding:18px 10px 14px;background:#fff;border:2px solid #d9dee7;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--navy)}
+.extra-icon{width:76px;height:76px;object-fit:contain}
+.extra-name{width:100%;min-width:0;min-height:58px;display:flex;align-items:center;justify-content:center;text-align:center;font:22px/1.12 Molot,Arial,sans-serif;font-weight:400}
+.extra-price{color:var(--red);font:36px/1 Molot,Arial,sans-serif;white-space:nowrap}
+.extra-rub{font:700 26px/1 Arial,sans-serif}
+.extra-card:nth-child(11){grid-column:2}
+.extra-card:disabled{opacity:.42;cursor:default}
+.extra-card:not(:disabled):active{border-color:var(--red);transform:scale(.985)}
+.extras-back{height:90px;border:2px solid #fff;border-radius:14px;background:#fff;color:var(--navy);font:34px/1 Molot,Arial,sans-serif;display:flex;align-items:center;justify-content:center;gap:14px}
+.extras-back span{font:42px/1 Arial,sans-serif}
+.extras-v58 button:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+
+/* v60: all services on one screen, larger cards and original icons */
+.extras-app{padding:20px 24px 18px;grid-template-rows:54px minmax(0,1fr) 76px;gap:14px}
+.extras-header{background:transparent;border-radius:0;color:#fff;gap:12px}
+.extras-header h1{font-size:36px}
+.extras-title-icon{width:42px;height:42px;border-radius:10px}
+.extras-title-icon svg{width:26px;height:26px}
+.extras-grid{gap:12px}
+.extra-card{padding:18px 12px 14px;gap:12px}
+.extra-icon{width:96px;height:96px}
+.extra-name{font-size:25px;min-height:60px;line-height:1.1}
+.extra-price{font-size:40px}
+.extra-rub{font-size:28px}
+.extras-back{height:76px;font-size:32px}

@@ -48,37 +48,115 @@
     }
   </script>
   
+<script>
+(function () {
+  var BASE_W = 1280;
+  var BASE_H = 1024;
+
+  function calculateTerminalScale() {
+    var vw = window.innerWidth || document.documentElement.clientWidth || BASE_W;
+    var vh = window.innerHeight || document.documentElement.clientHeight || BASE_H;
+
+    // Always fit the complete 1280×1024 terminal inside the visible browser area.
+    // This prevents vertical scrolling and preserves the exact 5:4 proportions.
+    var scale = Math.min(vw / BASE_W, vh / BASE_H);
+
+    // Native terminal remains pixel-perfect 1:1.
+    if (Math.abs(vw - BASE_W) <= 2 && Math.abs(vh - BASE_H) <= 2) {
+      scale = 1;
+    }
+
+    if (!isFinite(scale) || scale <= 0) scale = 1;
+    return scale;
+  }
+
+  function applyTerminalScale() {
+    var scale = calculateTerminalScale();
+    var root = document.documentElement;
+    root.style.setProperty('--terminal-scale', scale.toFixed(4));
+    root.style.setProperty('--terminal-shell-width', (BASE_W * scale).toFixed(2) + 'px');
+    root.style.setProperty('--terminal-shell-height', (BASE_H * scale).toFixed(2) + 'px');
+    root.classList.add('terminal-scale-ready');
+  }
+
+  window.fitTerminalStage = applyTerminalScale;
+  applyTerminalScale();
+  window.addEventListener('resize', applyTerminalScale);
+  window.addEventListener('orientationchange', applyTerminalScale);
+})();
+</script>
+<link href="css/extras-v58.css" rel="stylesheet" type="text/css">
 </head>
-<body onload="initView(); DispatcherWebSocket();">
-<!-- Main Container -->
-<div class="logo"></div>
-<div class="container">
-  <div class="partition_label">ДОПОЛНИТЕЛЬНЫЕ УСЛУГИ</div>
-
-  <div class="extras_line">
-    <button class="thumb_extras card_extra_n" onclick='next("n")' id="extra_n"><div class="thumb_text_extras"><span id="extra_n_name"></span><br/><span id="extra_n_cost">0</span><span class="currency">q</span></div></button>
-    <button class="thumb_extras card_extra_c" onclick='next("c")' id="extra_c"><div class="thumb_text_extras"><span id="extra_c_name"></span><br/><span id="extra_c_cost">0</span><span class="currency">q</span></div></button>
-    <button class="thumb_extras card_extra_f" onclick='next("f")' id="extra_f"><div class="thumb_text_extras"><span id="extra_f_name"></span><br/><span id="extra_f_cost">0</span><span class="currency">q</span></div></button>
-    <button class="thumb_extras card_extra_o" onclick='next("o")' id="extra_o"><div class="thumb_text_extras"><span id="extra_o_name"></span><br/><span id="extra_o_cost">0</span><span class="currency">q</span></div></button>
-    <button class="thumb_extras card_extra_b" onclick='next("b")' id="extra_b"><div class="thumb_text_extras"><span id="extra_b_name"></span><br/><span id="extra_b_cost">0</span><span class="currency">q</span></div></button>
-  </div>
-  <div class="extras_line">
-    <button class="thumb_extras card_extra_d" onclick='next("d")' id="extra_d"><div class="thumb_text_extras"><span id="extra_d_name"></span><br/><span id="extra_d_cost">0</span><span class="currency">q</span></div></button>
-    <button class="thumb_extras card_extra_p" onclick='next("p")' id="extra_p"><div class="thumb_text_extras"><span id="extra_p_name"></span><br/><span id="extra_p_cost">0</span><span class="currency">q</span></div></button>
-    <button class="thumb_extras card_extra_e" onclick='next("e")' id="extra_e"><div class="thumb_text_extras"><span id="extra_e_name"></span><br/><span id="extra_e_cost">0</span><span class="currency">q</span></div></button>
-    <button class="thumb_extras card_extra_h" onclick='next("h")' id="extra_h"><div class="thumb_text_extras"><span id="extra_h_name"></span><br/><span id="extra_h_cost">0</span><span class="currency">q</span></div></button>
-    <button class="thumb_extras card_extra_g" onclick='next("g")' id="extra_g"><div class="thumb_text_extras"><span id="extra_g_name"></span><br/><span id="extra_g_cost">0</span><span class="currency">q</span></div></button>
-  </div>
-  <div class="extras_line">
-    <button class="thumb_extras card_extra_j" onclick='next("j")' id="extra_j"><div class="thumb_text_extras"><span id="extra_j_name"></span><br/><span id="extra_j_cost">0</span><span class="currency">q</span></div></button>
-    <button class="thumb_extras card_extra_k" onclick='next("k")' id="extra_k"><div class="thumb_text_extras"><span id="extra_k_name"></span><br/><span id="extra_k_cost">0</span><span class="currency">q</span></div></button>
-    <button class="thumb_extras card_extra_m" onclick='next("m")' id="extra_m"><div class="thumb_text_extras"><span id="extra_m_name"></span><br/><span id="extra_m_cost">0</span><span class="currency">q</span></div></button>
-  </div>
-
-  <div class="line2">
-    <button class="thumb1 market" onclick='document.location.href = "index.html";'><div class="thumb1text">НАЗАД К ВЫБОРУ СТРИЖЕК</div></button>
-  </div>
-</div>
-<!-- Main Container Ends -->
-</body>
-</html>
+<body class="extras-v58" onload="initView(); DispatcherWebSocket(); fitTerminalStage();">
+<div class="terminal-shell"><div class="terminal-stage"><main class="extras-app">
+<header class="extras-header"><span class="extras-title-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10"/><path d="M16 10v12M10 16h12"/></svg></span><h1>ДОП. УСЛУГИ</h1></header>
+<section class="extras-grid" aria-label="Дополнительные услуги">
+<button class="extra-card" id="extra_n" onclick='next("n")'>
+  <img class="extra-icon" src="images/23n.png" alt="">
+  <span class="extra-name" id="extra_n_name"></span>
+  <span class="extra-price"><span id="extra_n_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_c" onclick='next("c")'>
+  <img class="extra-icon" src="images/23c.png" alt="">
+  <span class="extra-name" id="extra_c_name"></span>
+  <span class="extra-price"><span id="extra_c_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_f" onclick='next("f")'>
+  <img class="extra-icon" src="images/23f.png" alt="">
+  <span class="extra-name" id="extra_f_name"></span>
+  <span class="extra-price"><span id="extra_f_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_o" onclick='next("o")'>
+  <img class="extra-icon" src="images/23o.png" alt="">
+  <span class="extra-name" id="extra_o_name"></span>
+  <span class="extra-price"><span id="extra_o_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_b" onclick='next("b")'>
+  <img class="extra-icon" src="images/23b.png" alt="">
+  <span class="extra-name" id="extra_b_name"></span>
+  <span class="extra-price"><span id="extra_b_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_d" onclick='next("d")'>
+  <img class="extra-icon" src="images/23d.png" alt="">
+  <span class="extra-name" id="extra_d_name"></span>
+  <span class="extra-price"><span id="extra_d_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_p" onclick='next("p")'>
+  <img class="extra-icon" src="images/23p.png" alt="">
+  <span class="extra-name" id="extra_p_name"></span>
+  <span class="extra-price"><span id="extra_p_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_e" onclick='next("e")'>
+  <img class="extra-icon" src="images/23e.png" alt="">
+  <span class="extra-name" id="extra_e_name"></span>
+  <span class="extra-price"><span id="extra_e_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_h" onclick='next("h")'>
+  <img class="extra-icon" src="images/23h.png" alt="">
+  <span class="extra-name" id="extra_h_name"></span>
+  <span class="extra-price"><span id="extra_h_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_g" onclick='next("g")'>
+  <img class="extra-icon" src="images/23g.png" alt="">
+  <span class="extra-name" id="extra_g_name"></span>
+  <span class="extra-price"><span id="extra_g_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_j" onclick='next("j")'>
+  <img class="extra-icon" src="images/23j.png" alt="">
+  <span class="extra-name" id="extra_j_name"></span>
+  <span class="extra-price"><span id="extra_j_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_k" onclick='next("k")'>
+  <img class="extra-icon" src="images/23k.png" alt="">
+  <span class="extra-name" id="extra_k_name"></span>
+  <span class="extra-price"><span id="extra_k_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+<button class="extra-card" id="extra_m" onclick='next("m")'>
+  <img class="extra-icon" src="images/23m.png" alt="">
+  <span class="extra-name" id="extra_m_name"></span>
+  <span class="extra-price"><span id="extra_m_cost">0</span> <span class="extra-rub">₽</span></span>
+</button>
+</section>
+<button class="extras-back" onclick="document.location.href='index.html';"><span aria-hidden="true">‹</span> НАЗАД К ВЫБОРУ СТРИЖЕК</button>
+</main></div></div>
+</body></html>

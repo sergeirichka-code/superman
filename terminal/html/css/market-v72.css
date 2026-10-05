@@ -1,0 +1,43 @@
+
+:root{--terminal-scale:1;--terminal-shell-width:1280px;--terminal-shell-height:1024px}
+html,body.market-v72{width:100%;height:100%;margin:0;overflow:hidden;background:#142c5d}
+body.market-v72{display:flex;align-items:center;justify-content:center;cursor:default;color:#142c5d;font-family:Arial,sans-serif;touch-action:manipulation}
+.market-v72 *{box-sizing:border-box}
+.terminal-shell{width:var(--terminal-shell-width);height:var(--terminal-shell-height);position:relative;overflow:hidden;flex:0 0 auto}
+.terminal-stage{width:1280px;height:1024px;transform:scale(var(--terminal-scale));transform-origin:top left}
+.shop-app{width:1280px;height:1024px;padding:22px 28px 20px;display:grid;grid-template-rows:64px 76px minmax(0,1fr) 78px 86px;gap:16px}
+.shop-header{display:flex;align-items:center;justify-content:space-between;color:white}
+.shop-header h1{font:38px/1 Molot,Arial,sans-serif;margin:0}
+.shop-brands{display:flex;align-items:center;gap:12px;font-size:22px}
+.market-v72 .market_filter_btn{height:54px;margin:0;width:130px;padding:8px 18px;border:2px solid white;border-radius:12px;background:transparent;color:white;display:flex;align-items:center;justify-content:center;font:26px/1 Molot,Arial,sans-serif;cursor:pointer}
+.market-v72 .market_filter_btn.selected{background:#ef3f43;border-color:#ef3f43}
+.shop-tabs{display:grid;grid-template-columns:1.4fr 1fr 1.4fr .8fr;gap:14px}
+.market-v72 .block_menu{width:auto;height:76px;margin:0;border:2px solid #fff;border-radius:14px;background:#fff;color:#142c5d;font:28px/1.1 Molot,Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:12px;cursor:pointer}
+.market-v72 .block_menu.selected{background:#ef3f43;color:white;border-color:#ef3f43}
+.shop-catalog{min-height:0;overflow:hidden}
+.market-v72 .market_block{width:100%;height:100%;margin:0;padding:0 10px 0 0;background:transparent;border-radius:0;overflow-y:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:344px;align-content:start;gap:14px;scrollbar-width:thin;scrollbar-color:#ef3f43 #294372;overscroll-behavior:contain}
+.market-v72 .market_block.hidden{display:none}
+.market-v72 .market_cell{float:none;position:relative;width:auto;height:344px;margin:0;padding:142px 14px 14px;border:3px solid white;border-radius:16px;background-color:#fff;background-position:center 10px;background-size:130px 130px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.market-v72 .market_cell.selected{border-color:#ef3f43}
+.market-v72 .market_label{width:100%;height:auto;min-height:66px;margin:0;padding:0;background:none;color:#142c5d;display:flex;align-items:center;justify-content:center;font:22px/1.15 Molot,Arial,sans-serif;text-align:center}
+.market-v72 .market_label.selected{background:none;color:#142c5d}
+.market-v72 .market_cost{width:100%;height:36px;font:34px/1 Molot,Arial,sans-serif;color:#ef3f43}
+.market-v72 .market_controls{display:grid;grid-template-columns:64px 1fr 64px;gap:8px;margin-top:auto;align-items:center}
+.market-v72 .market_btn{float:none;width:64px;height:58px;margin:0;padding:0;border:0;border-radius:10px;background:#ef3f43;color:#fff;font:40px/1 Arial,sans-serif;cursor:pointer}
+.market-v72 .market_btn_minus{background:#eaf0f8;color:#142c5d}
+.market-v72 .market_numbox{float:none;width:auto;height:58px;margin:0;border:2px solid #dce3ee;border-radius:10px;display:flex;align-items:center;justify-content:center;font:30px/1 Molot,Arial,sans-serif}
+.shop-totals{background:#fff;border-radius:14px;display:grid;grid-template-columns:1.4fr 1fr 1fr;align-items:center;padding:14px 24px;gap:20px;font:21px/1 Molot,Arial,sans-serif}
+.shop-totals>div{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.shop-totals strong{font:32px/1 Molot,Arial,sans-serif;white-space:nowrap}
+.shop-total strong{color:#ef3f43;font-size:40px}
+.shop-payments{display:grid;grid-template-columns:1fr 1fr 1fr 1.25fr;gap:14px}
+.shop-payments button{border:0;border-radius:14px;background:white;color:#142c5d;font:30px/1 Molot,Arial,sans-serif;cursor:pointer}
+.shop-payments #btn_pay{background:#ef3f43;color:white}
+.shop-payments button:disabled{opacity:.4;cursor:default}
+.market-v72 button:focus-visible{outline:3px solid #ef3f43;outline-offset:3px}
+.market-v72 .window{border-radius:18px;background:white;color:#142c5d}
+.market-v72 .modal_button{background:#ef3f43;border-radius:12px;color:white}
+.market-v72 .market_block{grid-auto-rows:300px}
+.market-v72 .market_cell{height:300px;padding:116px 12px 10px;background-size:106px 106px;background-position:center 6px;gap:4px}
+.market-v72 .market_label{min-height:62px;font-size:22px}
+.market-v72 .market_cost{height:34px;font-size:32px}

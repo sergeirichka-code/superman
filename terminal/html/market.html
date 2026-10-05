@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Market</title>
+<title>Наш Супермаркет</title>
 
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <link rel="stylesheet" type="text/css" href="css/market.css" />
@@ -358,74 +358,49 @@ function checkTimer() {
 
 </script>
 
-</head>
+<link href="css/market-v72.css" rel="stylesheet"><script>
+(function () {
+  var BASE_W = 1280;
+  var BASE_H = 1024;
+
+  function calculateTerminalScale() {
+    var vw = window.innerWidth || document.documentElement.clientWidth || BASE_W;
+    var vh = window.innerHeight || document.documentElement.clientHeight || BASE_H;
+
+    // Always fit the complete 1280×1024 terminal inside the visible browser area.
+    // This prevents vertical scrolling and preserves the exact 5:4 proportions.
+    var scale = Math.min(vw / BASE_W, vh / BASE_H);
+
+    // Native terminal remains pixel-perfect 1:1.
+    if (Math.abs(vw - BASE_W) <= 2 && Math.abs(vh - BASE_H) <= 2) {
+      scale = 1;
+    }
+
+    if (!isFinite(scale) || scale <= 0) scale = 1;
+    return scale;
+  }
+
+  function applyTerminalScale() {
+    var scale = calculateTerminalScale();
+    var root = document.documentElement;
+    root.style.setProperty('--terminal-scale', scale.toFixed(4));
+    root.style.setProperty('--terminal-shell-width', (BASE_W * scale).toFixed(2) + 'px');
+    root.style.setProperty('--terminal-shell-height', (BASE_H * scale).toFixed(2) + 'px');
+    root.classList.add('terminal-scale-ready');
+  }
+
+  window.fitTerminalStage = applyTerminalScale;
+  applyTerminalScale();
+  window.addEventListener('resize', applyTerminalScale);
+  window.addEventListener('orientationchange', applyTerminalScale);
+})();
+</script></head>
 
 
-<body onload="initPage(); DispatcherWebSocket();">
-<div class="logo_market"></div>
-<!-- Main Container -->
-<div class="container"> 
-  <!-- Stats Gallery Section -->
-	<div class="center1">
-		<div class="market_filter">
-			<div id="Estel" onclick="applyFilter('Estel');" class="market_filter_btn">Estel</div>
-			<div id="Tefia" onclick="applyFilter('Tefia');" class="market_filter_btn">Tefia</div>
-<!--			<div id="WhiteCosmetics" onclick="applyFilter('WhiteCosmetics');" class="market_filter_btn">White Cosmetics</div>-->
-		</div>
-	</div>
-
-	<div class="market_content">
-		<div class="block_menu_container">
-			<div class="block_menu selected" id="menu_shampoo" onclick="selectMenuItem('shampoo')">
-				<div class="market_icon market-shampoo"></div>
-				<div class="block_menu_label">Шампуни и Уход</div>
-			</div>
-			<div class="block_menu" id="menu_styling" onclick="selectMenuItem('styling')">
-				<div class="market_icon market-hair-gel"></div>
-				<div class="block_menu_label">Стайлинг</div>
-			</div>
-			<div class="block_menu" id="menu_shaving" onclick="selectMenuItem('shaving')">
-				<div class="market_icon market-shaving"></div>
-				<div class="block_menu_label">Бритье и уход</div>
-			</div>
-			<div class="block_menu" id="menu_other" onclick="selectMenuItem('other')" hidden>
-				<div class="market_icon market-other"></div>
-				<div class="block_menu_label">Прочее</div>
-			</div>
-
-<!--			<button onclick="handleCashmachineEvent('escrow', 10000);">+100e</button>-->
-<!--			<button onclick="handleCashmachineEvent('banknote', 10000);">+100s</button>-->
-		</div>
-
-		<div class="market_block" id="block_shampoo"></div>
-		<div class="market_block hidden" id="block_styling"></div>
-		<div class="market_block hidden" id="block_shaving"></div>
-		<div class="market_block hidden" id="block_other"></div>
-
-	</div>
-
-  <div class="footer1">
-    <div class="footersum market_sum">
-      <stitog1>К ОПЛАТЕ:&nbsp;&nbsp;<stsum1 id="paymentCost">0</stsum1><span class="currency">q</span></stitog1>
-    </div>  
-    <div class="footersum market_sum">
-      <stitog1>ВНЕСЕНО:&nbsp;&nbsp;<stsum1 id="paymentSumm">0</stsum1><span class="currency">q</span></stitog1>
-    </div>
-    <div class="footersum market_sum">
-      <stitog1>СДАЧА:&nbsp;&nbsp;<stsum1 id="paymentChange">0</stsum1><span class="currency">q</span></stitog1>
-    </div>
-  </div>
-  <div class="line_buttons">
-    <button class="thumb1 payment_market" id="btn_back" onclick="document.location.href = 'index.html';" class="footer_back" /><div class="thumb1text opl font_30">НАЗАД</div>
-    <button class="thumb1 payment_market pay_by_card" disabled="true" id="btn_by_card" onclick="payByCard();"><div class="thumb1text opl font_30">КАРТОЙ</div></button>
-    <button class="thumb1 payment_market pay_by_sbp" disabled="true" id="btn_by_sbp" onclick="payBySbp();"><div class="thumb1text opl font_30 ">СБП</div></button>
-    <button class="thumb1 payment_market" id="btn_pay" disabled="true" onclick="pay();" class="footer_opl" /><div class="thumb1text opl font_30">ОПЛАТИТЬ</div>
-  </div>
-</div>
-<!-- Main Container Ends -->
-
-
-<!-- modal window -->
+<body class="market-v72" onload="initPage(); DispatcherWebSocket();fitTerminalStage();"><div class="terminal-shell"><div class="terminal-stage"><main class="shop-app">
+<header class="shop-header"><h1>НАШ СУПЕРМАРКЕТ</h1><div class="shop-brands"><span>Бренд:</span><button id="Estel" onclick="applyFilter('Estel');" class="market_filter_btn">ESTEL</button><button id="Tefia" onclick="applyFilter('Tefia');" class="market_filter_btn">TEFIA</button></div></header>
+<nav class="shop-tabs" aria-label="Категории товаров"><button class="block_menu selected" id="menu_shampoo" onclick="selectMenuItem('shampoo')">Шампуни и уход</button><button class="block_menu " id="menu_styling" onclick="selectMenuItem('styling')">Стайлинг</button><button class="block_menu " id="menu_shaving" onclick="selectMenuItem('shaving')">Бритьё и уход</button><button class="block_menu " id="menu_other" onclick="selectMenuItem('other')">Прочее</button></nav><section class="shop-catalog" aria-label="Товары"><div class="market_block " id="block_shampoo"></div><div class="market_block hidden" id="block_styling"></div><div class="market_block hidden" id="block_shaving"></div><div class="market_block hidden" id="block_other"></div></section><section class="shop-totals"><div class="shop-total">К ОПЛАТЕ <strong><span id="paymentCost">0</span> ₽</strong></div><div>ВНЕСЕНО <strong><span id="paymentSumm">0</span> ₽</strong></div><div>СДАЧА <strong><span id="paymentChange">0</span> ₽</strong></div></section>
+<footer class="shop-payments"><button id="btn_back" onclick="document.location.href='index.html';">НАЗАД</button><button id="btn_by_card" disabled onclick="payByCard();">КАРТОЙ</button><button id="btn_by_sbp" disabled onclick="payBySbp();">СБП</button><button id="btn_pay" disabled onclick="pay();">ОПЛАТИТЬ</button></footer></main></div></div><!-- modal window -->
 <div id="boxes">
 
 	<!-- not have a change dialog -->
@@ -471,5 +446,4 @@ function checkTimer() {
 </div>
 
 
-</body>
-</html>
+</body></html>

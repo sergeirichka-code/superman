@@ -31,3 +31,14 @@ body.from-where-v64{display:flex;align-items:center;justify-content:center;curso
 .source-icon-2{width:128px;height:112px}
 .source-name{font-size:38px;min-height:87px;display:flex;align-items:center;justify-content:center}
 .source-arrow{display:none}
+
+/* v80: nine reserved slots, equal visual priority for regular clients. */
+.source-app{padding:24px 36px;grid-template-rows:112px minmax(0,1fr) 34px;gap:18px}
+.source-grid{grid-template-rows:repeat(3,minmax(0,1fr));gap:16px}
+.source-card{padding:18px;gap:12px}
+.source-icon,.source-icon-1,.source-icon-2{width:104px;height:104px;margin:0;border-radius:0;overflow:visible}
+.source-name{font-size:30px;min-height:68px}
+.source-card.regular_client{background:white;border-color:white;color:#142c5d}
+.source-card.source-reserved{opacity:1;border:2px dashed #91a1bd;background:#edf1f7;color:#75839d}
+.source-reserve-icon{font:68px/1 Arial;color:#91a1bd;height:104px;display:flex;align-items:center}
+.source-note{font-size:20px}

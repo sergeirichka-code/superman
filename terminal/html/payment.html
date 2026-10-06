@@ -11,6 +11,8 @@
 <link rel="stylesheet" type="text/css" href="css/modal-win.css" />
 <link href="css/style.css" rel="stylesheet" type="text/css">
 <link href="css/payment.css" rel="stylesheet" type="text/css">
+<link href="css/payment-v76.css" rel="stylesheet" type="text/css">
+<script src="js/payment-layout-v76.js"></script>
 
 <script src="../src/resources/services.cfg"></script>
 <script src="../dist/services.cfg"></script>
@@ -739,19 +741,18 @@ function handleSbpResponse(result) {
 </head>
 
 
-<body onload="initPage(); DispatcherWebSocket();">
+<body class="payment-v76" onload="initPage(); layoutPayment(); DispatcherWebSocket();">
 
 <!-- Main Container -->
-<div class="container"> 
-  <!-- Stats Gallery Section -->
-  <div class="extras_block" id="box_extra"></div>
-  <div class="center1">
-    <div id="positionImgClass">
-		<div class="image_block" id="haircut_img"></div>
-		<div class="payment_block" id="payment_block">
+<div class="payment-shell"><main class="payment-stage">
+<header class="payment-header"><h1>К ОПЛАТЕ</h1><span>Добавьте услуги и выберите способ оплаты</span></header>
+<section class="services-panel"><h2>ПОПУЛЯРНЫЕ УСЛУГИ</h2><div class="extras_block" id="box_extra"></div>
+<div class="services-footer"><button class="thumb1 payment" id="btn_back" onclick="document.location.href = 'index.html';" ondblclick="openPinPage('cancel_pay');"><div ondblclick="openPinPage('cancel_pay');" class="thumb1text opl font_30">НАЗАД</div></button><span>Нажмите на услугу, чтобы добавить её</span></div></section>
+<aside class="checkout-panel"><div class="chosen-service"><span class="chosen-label">ВАША УСЛУГА</span><st1 id="positionName"></st1></div>
+<div id="haircut_img" hidden></div>		<div class="payment_block" id="payment_block">
 			<div class="payment_block_content" id="payment_block_content">
-				<div class="payment_block_item">
-					<stitog1>К ОПЛАТЕ:&nbsp;<stsum1 id="paymentCost">0</stsum1><span class="currency">q</span></stitog1>
+				<div class="payment_block_item payment-total">
+<stitog1><span class="total-label">К ОПЛАТЕ</span><span class="total-number"><stsum1 id="paymentCost">0</stsum1><span class="currency">q</span></span></stitog1>
 				</div>
 				<div class="payment_block_item" id="discount_block" style="display: none;">
 					<stitog1>СКИДКА:&nbsp;<stsum1 id="discount">0</stsum1><span class="currency">q</span></stitog1>
@@ -771,19 +772,8 @@ function handleSbpResponse(result) {
 <!--			<button onclick="handleCashmachineEvent('escrow', 5000);">+50e</button>-->
 <!--			<button onclick="handleCashmachineEvent('banknote', 5000);">+50s</button>-->
 		</div>
-    </div>
-    <div class="centerfon">
-       <st1 id="positionName"></st1>
-    </div>
-  </div>
-  <div class="line1">
-	  <button class="thumb1 payment" id="btn_back" onclick="document.location.href = 'index.html';" ondblclick="openPinPage('cancel_pay');"><div ondblclick="openPinPage('cancel_pay');" class="thumb1text opl font_30">НАЗАД</div></button>
-	  <button class="thumb1 payment" id="btn_promocode" onclick="addPromoCode();" disabled="true"><div class="thumb1text opl font_30">ПРОМОКОД</div></button>
-	  <button class="thumb1 payment pay_by_card" id="btn_by_card" onclick="payByCard();" disabled="true"><div class="thumb1text opl font_30">КАРТОЙ</div></button>
-	  <button class="thumb1 payment pay_by_sbp" id="btn_by_sbp" onclick="payBySbp();" disabled="true"><div class="thumb1text opl font_30 ">СБП</div></button>
-	  <button class="thumb1 payment" id="btn_pay" disabled="true" onclick="pay();" ><div class="thumb1text opl font_30">ОПЛАТИТЬ</div></button>
-  </div>
-</div>
+<div class="payment-methods"><h2>СПОСОБ ОПЛАТЫ</h2><button class="thumb1 payment pay_by_card" id="btn_by_card" onclick="payByCard();" disabled="true"><svg class="pay-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="4" y="10" width="40" height="29" rx="5" stroke="currentColor" stroke-width="3"/><path d="M5 19h38M11 30h10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><div class="thumb1text opl font_30">КАРТОЙ</div></button><button class="thumb1 payment pay_by_sbp" id="btn_by_sbp" onclick="payBySbp();" disabled="true"><img class="pay-icon sbp-icon" src="images/sbp_short.png" alt=""><div class="thumb1text opl font_30">СБП</div></button><button class="thumb1 payment" id="btn_pay" disabled="true" onclick="pay();" ><svg class="pay-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true"><rect x="3" y="12" width="42" height="25" rx="4" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="24.5" r="7" stroke="currentColor" stroke-width="3"/><path d="M8 24h3m26 0h3M8 7h32" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg><div class="thumb1text opl font_30">ОПЛАТИТЬ</div></button><p>Для оплаты наличными внесите купюры в терминал</p></div>
+<button class="thumb1 payment" id="btn_promocode" onclick="addPromoCode();" disabled="true"><div class="thumb1text opl font_30">ПРОМОКОД</div></button></aside></main></div>
 <!-- Main Container Ends -->
 
 

@@ -37,3 +37,9 @@ body.extras-v58{display:flex;align-items:center;justify-content:center;cursor:de
 .extra-price{font-size:40px}
 .extra-rub{font-size:28px}
 .extras-back{height:76px;font-size:32px}
+
+/* v80 supplied icon sheets, consistent larger artwork */
+.extra-icon{width:132px;height:132px;flex-shrink:0}
+.extra-card{padding:12px 10px;gap:8px}
+
+#extra_h .extra-icon,#extra_g .extra-icon{width:156px;height:156px;margin:-12px 0}

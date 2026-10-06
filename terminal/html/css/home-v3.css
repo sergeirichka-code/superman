@@ -1,8 +1,8 @@
 :root{
   --navy:#142c5d;
   --red:#ef3f43;
-  --cream:#f3f0ea;
-  --paper:#fbfaf5;
+  --cream:#ffffff;
+  --paper:#ffffff;
   --white:#fff;
   --muted:#68748b;
   --line:#deded9;
@@ -252,7 +252,7 @@ html,body{overflow:hidden}
 
 /* v37: new opposite-facing service portraits + stronger haircut emphasis */
 .service-image-wrap{
-  background:#fbfaf5;
+  background:#ffffff;
 }
 
 #haircut_a .service-image-wrap img,
@@ -923,3 +923,6 @@ html,body{overflow:hidden}
   font-family:Molot,Arial,sans-serif !important;
   font-weight:400 !important;
 }
+
+/* v74: neutral service text panels. */
+#haircut_e .service-info-strip{border-color:#d9dee7 !important;background:#fff !important}

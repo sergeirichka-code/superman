@@ -1,0 +1,86 @@
+:root{--payment-scale:1;--payment-width:1280px;--payment-height:1024px}
+html,body.payment-v76{width:100%;height:100%;overflow:hidden;margin:0;background:#142c5d}
+body.payment-v76{display:flex;align-items:center;justify-content:center;color:#142c5d;cursor:default;touch-action:manipulation}
+.payment-stage *{box-sizing:border-box}
+.payment-shell{width:var(--payment-width);height:var(--payment-height);flex:none}
+.payment-stage{width:1280px;height:1024px;transform:scale(var(--payment-scale));transform-origin:top left;padding:24px 28px;display:grid;grid-template-columns:830px 370px;grid-template-rows:68px 1fr;gap:20px 24px}
+.payment-header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;color:white}
+.payment-header h1{font:44px/1 Molot;margin:0}.payment-header>span{font:21px/1.3 Arial}
+.services-panel{display:flex;flex-direction:column;min-height:0}
+.services-panel h2,.payment-methods h2{font:26px/1 Molot;color:white;margin:0 0 16px}
+.payment-v76 .extras_block{padding:0;margin:0;width:100%;height:auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;clear:none}
+.payment-v76 .extra_cell{position:relative;grid-column:span 2;width:100%;height:96px;margin:0;padding:0;display:block;background:#fff;border:2px solid #fff;border-radius:12px;overflow:hidden;cursor:pointer;color:#142c5d}
+.payment-v76 .extra_cell.popular-extra{grid-column:span 3;height:162px;border:2px solid #fff}
+.payment-v76 .extra_content_empty,.payment-v76 .extra_content{width:100%;height:100%;padding:12px 14px;position:relative;text-align:left}
+.payment-v76 .extra_label{height:auto;margin:0;color:inherit;font:22px/1.08 Molot;text-align:left;max-width:100%}
+.payment-v76 .extra_cost{height:auto;margin:0;color:#ef3f43;font:28px/1 Molot;text-align:left;position:absolute;bottom:12px;left:14px}
+.payment-v76 .extra_cost .currency{font-size:.8em;margin-left:5px}
+.payment-v76 .popular-extra .extra_content_empty,.payment-v76 .popular-extra .extra_content{padding:22px}
+.payment-v76 .popular-extra .extra_label{font-size:30px;max-width:330px}
+.payment-v76 .popular-extra .extra_cost{font-size:40px;bottom:20px;left:22px}
+.payment-v76 .extra_controls{position:absolute;bottom:0;left:0;width:48px;height:48px;z-index:3}
+.payment-v76 .extra_controls[id^="extra_controls_p_"]{left:auto;right:0}
+.payment-v76 .extra_count_btn{width:48px;height:48px;float:none;border-radius:8px;background:#142c5d;color:white;font:32px/1 Arial;cursor:pointer}
+.payment-v76 .extra_cell.active{background:#ef3f43;border-color:#ef3f43;color:white}
+.payment-v76 .extra_cell.active .extra_cost{color:white;left:50%;transform:translateX(-50%);white-space:nowrap;bottom:12px}
+.payment-v76 .extra_cell.active .extra_count_btn{background:#c72732}
+.payment-v76 .extra_cell:disabled{opacity:.48;cursor:default}
+.payment-v76 .extra_cell:disabled .extra_content_btn{pointer-events:none}
+.payment-v76 .other-services-heading{grid-column:1/-1;margin:12px 0 2px;font:24px/1 Molot;color:white}
+.fade-photo{position:absolute;right:0;top:0;height:100%;width:146px;object-fit:cover;border-radius:0 9px 9px 0;pointer-events:none}
+#extra_cell_i .extra_label{max-width:220px}#extra_cell_i.active .fade-photo{opacity:.25}
+.services-footer{display:flex;align-items:center;gap:28px;margin-top:auto;height:76px}.services-footer>span{font:18px/1.35 Arial;color:#d8e0ee;max-width:330px}
+.payment-stage button.thumb1{float:none;margin:0;width:100%;height:72px;background:#fff;border:0;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#142c5d}
+.payment-stage .thumb1text{padding:0;margin:0;display:block;width:auto;height:auto;font:27px/1 Molot;color:inherit}
+.payment-stage #btn_back{width:264px;height:76px;flex:none}.payment-stage #btn_back .thumb1text:before{content:'‹';font-family:Arial;margin-right:18px}
+.checkout-panel{background:#fff;border-radius:18px;padding:24px;display:flex;flex-direction:column;min-height:0}
+.chosen-label{font:16px/1 Arial;color:#66728a;display:block;margin-bottom:10px}.chosen-service{padding-bottom:18px;border-bottom:1px solid #dbe0e9}
+#positionName{font:26px/1.1 Molot;color:#142c5d;display:block}
+.payment-v76 .payment_block{width:100%;height:auto;margin:0;border:0;display:block;padding:0}
+.payment-v76 .payment_block_content{width:100%;height:auto;padding:0;display:flex;flex-direction:column}
+.payment-v76 .payment_block_item{width:100%;height:auto;float:none;margin:0;padding:0}
+.payment-v76 .payment_block_item stitog1{font:21px/1.3 Molot;color:#142c5d;text-align:left;padding:10px 0 0}
+.payment-v76 .payment-total{padding:22px 0 16px}
+.payment-v76 .payment-total stitog1{padding:0;color:#ef3f43}
+.total-label{display:block;font:24px/1 Molot;margin-bottom:12px}.total-number{display:block;font:70px/1 Molot;white-space:nowrap}.total-number .currency{font-size:46px;margin-left:12px}
+.payment-v76 #discount_block stitog1{color:#ef3f43}.payment-v76 #bonus_block stitog1{font-size:20px}.payment-v76 .client_bonus_btn{font-size:18px;width:100px;height:38px}
+.payment-methods{margin-top:26px;display:flex;flex-direction:column;gap:12px}.payment-methods h2{font-size:22px;color:#142c5d;margin:0 0 2px}
+.payment-stage #btn_by_card,.payment-stage #btn_by_sbp{background:#142c5d;color:white;background-image:none}
+.payment-stage #btn_pay{background:#ef3f43;color:white}
+.payment-stage button.thumb1:disabled{opacity:1;background:#e4e8ef!important;color:#8490a5!important;cursor:default}
+.payment-methods p{font:16px/1.4 Arial;margin:0;color:#64718b}
+.payment-stage #btn_promocode{margin-top:auto;border:2px solid #d7deea;height:56px;background:white}
+.payment-stage #btn_promocode .thumb1text{font-size:22px}
+.payment-stage button:focus-visible{outline:3px solid #ef3f43;outline-offset:3px}
+.payment-v76 .payout_disabled_msg{font:18px/1.3 Arial;color:#ef3f43;width:auto;padding:10px 0 0}
+/* Keep all fourteen services and navigation inside the terminal viewport. */
+.payment-v76 .extra_cell.popular-extra{height:146px}
+.payment-v76 .extra_cell{height:88px}
+.payment-stage{box-sizing:border-box}
+
+/* v77: four illustrations in the established navy and white style. */
+.payment-v76 .popular-extra .extra_label{font-size:26px;max-width:244px;position:relative;z-index:1}
+.popular-art{position:absolute;right:6px;top:6px;width:132px;height:130px;object-fit:contain;background:#fff;border-radius:8px;pointer-events:none}
+.payment-v76 .popular-extra.active .popular-art{opacity:.3}
+.payment-v76 .popular-extra.active .extra_cost{left:62px;transform:none;font-size:32px}
+
+/* v78: larger featured services and visible payment method icons. */
+.payment-v76 .extras_block{grid-template-columns:repeat(12,minmax(0,1fr))}
+.payment-v76 .extra_cell{grid-column:span 3;height:100px}
+.payment-v76 .extra_cell.popular-extra{grid-column:span 6;height:180px}
+.payment-v76 .popular-extra .extra_label{font-size:28px;max-width:225px}
+.payment-v76 .popular-extra .extra_content_empty,.payment-v76 .popular-extra .extra_content{padding:20px 18px}
+.popular-art{width:164px;height:164px;right:4px;top:6px}
+.payment-v76 .popular-extra .extra_cost{font-size:44px;left:18px;bottom:20px}
+.payment-v76 .extra_label{font-size:21px}
+.payment-v76 .extra_cost{font-size:30px}
+.payment-v76 .popular-extra.active .extra_cost{font-size:34px;left:62px;bottom:12px}
+.payment-stage .payment-methods button.thumb1{height:86px;justify-content:flex-start;padding:0 22px;gap:20px}
+.pay-icon{display:block;width:46px;height:46px;flex:0 0 46px;object-fit:contain}
+.payment-stage .payment-methods .thumb1text{font-size:30px}
+.payment-stage button:disabled .sbp-icon{opacity:.55}
+.total-number{font-size:78px}
+.payment-v76 .popular-extra .extra_label{max-width:210px}
+#extra_cell_d.popular-extra .extra_label{font-size:26px}
+.payment-v76 .extra_cell:not(.popular-extra) .extra_label{font-size:20px;line-height:1.08}
+.payment-v76 .extra_cell:not(.popular-extra) .extra_cost{font-size:28px;bottom:10px}

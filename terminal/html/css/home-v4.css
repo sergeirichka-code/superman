@@ -4,8 +4,8 @@
   --navy-mid: #1b3970;
   --red: #ef3f43;
   --red-dark: #d93439;
-  --cream: #f3f0ea;
-  --paper: #faf9f6;
+  --cream: #ffffff;
+  --paper: #ffffff;
   --white: #ffffff;
   --ink: #17305f;
   --muted: #68748b;
@@ -213,7 +213,7 @@ body.home-v3 {
 .service-image-wrap {
   min-width: 0;
   height: 100%;
-  background: #f4f2ee;
+  background: #ffffff;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -413,7 +413,7 @@ body.home-v3 {
   order: 2;
   height: 245px;
   border-radius: 7px;
-  background: #f4f2ee;
+  background: #ffffff;
   position: relative;
   overflow: hidden;
   display: flex;

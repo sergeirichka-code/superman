@@ -11,7 +11,7 @@ body.actions-v61{display:flex;align-items:center;justify-content:center;cursor:d
 .actions-header h1{font:44px/1 Molot,Arial,sans-serif;margin:0}
 .actions-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:404px minmax(0,1fr);gap:20px}
 .promo-card{position:relative;overflow:hidden;min-width:0;padding:0;border:2px solid #7082a7;border-radius:18px;text-align:left;cursor:pointer;font-family:Molot,Arial,sans-serif}
-.promo-illustrated{background:#132757;color:#f3efea}
+.promo-illustrated{background:#132757;color:#ffffff}
 .promo-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .promo-copy{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start}
 .promo-illustrated .promo-copy{width:48%;height:100%;padding:42px 0 56px 24px;justify-content:center}
@@ -56,3 +56,20 @@ body.actions-v61{display:flex;align-items:center;justify-content:center;cursor:d
 .promo-small .promo-name{font-size:34px}
 .promo-small .promo-symbol{flex-basis:82px;height:82px;font-size:54px}
 .promo-small .promo-price{font-size:46px}
+
+/* v74: six slots and matching portrait scale. */
+.promo-small{grid-column:span 2;padding:24px;gap:16px}
+.promo-small .promo-symbol{display:none}
+.promo-small .promo-name{font-size:30px;max-width:100%}
+.promo-small .promo-copy{width:100%}
+#action_a .promo-art{width:535px;height:359px;top:-24px;right:-20px}
+.promo-placeholder{background:#fff;border:2px dashed #8294b6;color:#64718b;cursor:default}
+.promo-placeholder .promo-rule{background:#ef3f43}
+.promo-soon{font:24px/1.2 Arial,sans-serif;color:#64718b}
+
+/* v75: clean artwork, balanced portrait sizes and safe margins. */
+#action_a .promo-art,#action_b .promo-art{inset:14px auto auto 50%;transform:translateX(-50%);width:auto;height:300px;object-fit:contain}
+.promo-rule{visibility:hidden}
+
+/* v79: match father's visual scale to neighbouring promotions. */
+#action_a .promo-art{height:360px;width:auto;top:10px;clip-path:inset(0 0 58px 0)}

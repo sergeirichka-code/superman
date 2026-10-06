@@ -43,3 +43,6 @@ body.extras-v58{display:flex;align-items:center;justify-content:center;cursor:de
 .extra-card{padding:12px 10px;gap:8px}
 
 #extra_h .extra-icon,#extra_g .extra-icon{width:156px;height:156px;margin:-12px 0}
+
+/* v81: monochrome navy and white icon display, red retained for prices only. */
+.extra-icon{filter:url(#navy-icons)}

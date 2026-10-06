@@ -84,3 +84,15 @@ body.payment-v76{display:flex;align-items:center;justify-content:center;color:#1
 #extra_cell_d.popular-extra .extra_label{font-size:26px}
 .payment-v76 .extra_cell:not(.popular-extra) .extra_label{font-size:20px;line-height:1.08}
 .payment-v76 .extra_cell:not(.popular-extra) .extra_cost{font-size:28px;bottom:10px}
+
+/* v81: instructions on left, promo before methods, final action at bottom. */
+.payment-header{justify-content:flex-start}
+.payment-header h1{font:29px/1.2 Arial,sans-serif;font-weight:600}
+.promo-entry{margin-top:22px}
+.payment-stage .promo-entry #btn_promocode{margin:0;height:64px;border:2px solid #142c5d;color:#142c5d;background:#fff}
+.payment-stage .promo-entry #btn_promocode .thumb1text{font-size:26px}
+.payment-methods{margin-top:22px;gap:12px}
+.payment-submit{margin-top:auto;padding-top:18px}
+.payment-stage .payment-submit #btn_pay{height:86px;background:#ef3f43;color:#fff;display:flex;gap:18px;justify-content:center;border:2px solid #ef3f43}
+.payment-stage .payment-submit #btn_pay .thumb1text{font-size:32px}
+.payment-stage .payment-submit #btn_pay:disabled{background:#fbe5e7!important;color:#ba6970!important;border-color:#eab7bd}

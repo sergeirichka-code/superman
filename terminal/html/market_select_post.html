@@ -53,29 +53,6 @@ function handleStaffPostsListRequest(result) {
 </script>
 
 </head>
-<body onload="DispatcherWebSocket();">
-<div class="logo"></div>
-<div class="container">
-   <div class="tiket">
-     <st3 class="red">ВЫБЕРИТЕ НОМЕР МАСТЕРА, У КОТОРОГО</st3>
-     <st3 class="red">ВЫ ОБСЛУЖИВАЛИСЬ</st3>
-   </div>
-   <div class="line1">
-        <button class="thumb1 pl1" id="post_1" onclick='select_post(1);' disabled="true"><div class="thumb1text">1</div></button>
-        <button class="thumb1 pl1" id="post_2" onclick='select_post(2);' disabled="true"><div class="thumb1text">2</div></button>
-        <button class="thumb1 pl1" id="post_3" onclick='select_post(3);' disabled="true"><div class="thumb1text">3</div></button>
-        <button class="thumb1 pl1" id="post_4" onclick='select_post(4);' disabled="true"><div class="thumb1text">4</div></button>
-   </div>
-   <div class="line1">
-        <button class="thumb1 pl1" id="post_5" onclick='select_post(5);' disabled="true"><div class="thumb1text">5</div></button>
-        <button class="thumb1 pl1" id="post_6" onclick='select_post(6);' disabled="true"><div class="thumb1text">6</div></button>
-        <button class="thumb1 pl1" id="post_7" onclick='select_post(7);' disabled="true"><div class="thumb1text">7</div></button>
-        <button class="thumb1 pl1" id="post_8" onclick='select_post(8);' disabled="true"><div class="thumb1text">8</div></button>
-    </div>
-
-    <div class="line1">
-        <button class="thumb1 vote_next_btn hidden" id="btn_next" onclick="document.location.href = 'index.html'"><div id="btn_next_label" class="thumb1text gtv">назад</div></button>
-    </div>
-</div>
-</body>
+<link href="css/finish-v83.css" rel="stylesheet"><script src="js/finish-v83.js"></script>
+<body onload="DispatcherWebSocket();"><main class="finish-stage"><header><div class="eyebrow">Супермаркет</div><h1>Выберите номер мастера</h1><p style="margin-top:16px">У которого вы обслуживались</p></header><section class="post-grid"><button id="post_1" onclick="select_post(1)" disabled><span>Мастер</span>1</button><button id="post_2" onclick="select_post(2)" disabled><span>Мастер</span>2</button><button id="post_3" onclick="select_post(3)" disabled><span>Мастер</span>3</button><button id="post_4" onclick="select_post(4)" disabled><span>Мастер</span>4</button><button id="post_5" onclick="select_post(5)" disabled><span>Мастер</span>5</button><button id="post_6" onclick="select_post(6)" disabled><span>Мастер</span>6</button><button id="post_7" onclick="select_post(7)" disabled><span>Мастер</span>7</button><button id="post_8" onclick="select_post(8)" disabled><span>Мастер</span>8</button></section><footer class="footer"><button id="btn_next" class="hidden" onclick="document.location.href='index.html'">‹ Назад</button></footer></main></body>
 </html>

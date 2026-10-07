@@ -1,0 +1,1 @@
+(function(){function fit(){var s=Math.min(innerWidth/1280,innerHeight/1024),el=document.querySelector('.finish-stage');if(el){el.style.transform='scale('+s+')';el.style.left=((innerWidth-1280*s)/2)+'px';el.style.top=((innerHeight-1024*s)/2)+'px';}}window.addEventListener('resize',fit);window.addEventListener('load',fit);})();

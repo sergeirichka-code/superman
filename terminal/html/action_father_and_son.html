@@ -30,6 +30,8 @@
       cost = getService(TYPE, CODE).cost / 2;
     }
 
+    document.getElementById('father_cost').textContent = cost + ' ₽';
+    document.getElementById('son_cost').textContent = cost + ' ₽';
     document.getElementById('comment_1').innerHTML = "Акция подразумевает две отдельных <br/> оплаты по " + cost + " рублей";
     document.getElementById('comment_2').innerHTML = "за отца и сына, с возможностью выбрать необходимые доп. услуги";
   }
@@ -48,28 +50,6 @@
 
 </script>
 
-<body onload="initPage(); DispatcherWebSocket();">
-<div class="logo"></div>
-<div class="container">
-  <div class="center4">
-    <div class="tiket">
-      <st3><br/></st3>
-    </div>
-    <div class="tiket">
-      <st3>Обращаем внимание!</st3>
-    </div>
-    <div class="tiket">
-      <st5 id="comment_1"></st5>
-      <st5><br/></st5>
-    </div>
-    <div class="tiket">
-      <st5 id="comment_2"></st5>
-    </div>
-  </div>
-  <div class="gfooter1">
-    <button class="thumb1" onclick='back();'/><div class="thumb1text gtv">НАЗАД</div>
-    <button class="thumb1" onclick='next();'/><div class="thumb1text gtv">ДАЛЕЕ</div>
-  </div>
-</div>
-</body>
+<link href="css/finish-v83.css" rel="stylesheet"><script src="js/finish-v83.js"></script>
+<body onload="initPage(); DispatcherWebSocket();"><main class="finish-stage"><header><div class="eyebrow">Акции</div><h1>Отец + сын</h1></header><section class="panel father-main"><img class="father-art" src="images/promo-father-son.svg" alt="Отец и сын"><div><h2>Вместе — выгоднее</h2><p style="margin-top:18px">Две стрижки.<br>Две отдельные оплаты.</p><div class="split-pay"><article><h2>За отца</h2><strong id="father_cost"></strong></article><article><h2>За сына</h2><strong id="son_cost"></strong></article></div><p class="note">Дополнительные услуги можно выбрать отдельно для каждого.</p><div id="comment_1" hidden></div><div id="comment_2" hidden></div></div></section><footer class="footer"><button onclick="back()">‹ Назад</button><button class="primary" onclick="next()">Понятно, далее ›</button></footer></main></body>
 </html>

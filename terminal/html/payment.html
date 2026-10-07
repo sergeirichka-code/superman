@@ -738,10 +738,16 @@ function handleSbpResponse(result) {
 
 </script>
 
+<script src="js/payment-preview-config.js"></script>
+<script src="js/payment-preview-v90.js"></script>
+<link rel="stylesheet" href="css/payment-dialog-v91.css">
+<link rel="stylesheet" href="css/service-pin-v92.css">
+<link rel="stylesheet" href="css/promocode-v93.css">
+<script src="js/promocode-v93.js"></script>
 </head>
 
 
-<body class="payment-v76" onload="initPage(); layoutPayment(); DispatcherWebSocket();">
+<body class="payment-v76" onload="initPage(); layoutPayment(); if (!window.paymentPreviewEnabled) DispatcherWebSocket();">
 
 <!-- Main Container -->
 <div class="payment-shell"><main class="payment-stage">
@@ -798,52 +804,7 @@ function handleSbpResponse(result) {
 
 
 	<!-- pin pad dialog -->
-	<div id="pindialog" class="window">
-
-	<div class="font_32 dialog_text_box red" id="pindialog_title"></div>
-	<div class="font_32 dialog_text_box">Введите pin:</div>
-	<table width="100%">
-	<tr>
-	<td align="center" colspan="3">
-		<input id="passw" class="login_input_field" type="password"><br/>
-		<table>
-				<tr>
-				<td><button onclick="addNum('1', 'passw');" class="num_pad_button">1</button></td>
-				<td><button onclick="addNum('2', 'passw');" class="num_pad_button">2</button></td>
-				<td><button onclick="addNum('3', 'passw');" class="num_pad_button">3</button></td>
-				</tr>
-				<tr>
-				<td><button onclick="addNum('4', 'passw');" class="num_pad_button">4</button></td>
-				<td><button onclick="addNum('5', 'passw');" class="num_pad_button">5</button></td>
-				<td><button onclick="addNum('6', 'passw');" class="num_pad_button">6</button></td>
-				</tr>
-				<tr>
-				<td><button onclick="addNum('7', 'passw');" class="num_pad_button">7</button></td>
-				<td><button onclick="addNum('8', 'passw');" class="num_pad_button">8</button></td>
-				<td><button onclick="addNum('9', 'passw');" class="num_pad_button">9</button></td>
-				</tr>
-				<tr>
-				<td><button onclick="addNum('0', 'passw');" class="num_pad_button">0</button></td>
-				<td colspan="2"><button onclick="delNum('passw');" class="clear_pad_button">стереть</button></td>
-				</tr>
-		</table>
-	</td>
-	</tr>
-	<tr>
-		<td width="43%" style="padding: 20px;">
-			<a><button class="modal_button" onclick="closeModal();">отмена</button></a>
-		</td>
-		<td width="4%"></td>
-		<td width="43%">
-			<a><button class="modal_button" onclick="applyEnterPin();">ok</button></a>
-		</td>
-	</tr>
-	</table>
-	
-	</div>
-
-
-	
+<div id="pindialog" class="window" role="dialog" aria-modal="true" aria-labelledby="pindialog_title"><div class="pin-body"><h2 id="pindialog_title">Вход в сервисный режим</h2><label for="passw">Введите PIN-код</label><input id="passw" type="password" inputmode="numeric" autocomplete="off" aria-label="PIN-код"><div class="pin-keypad"><button type="button" onclick="addNum('1', 'passw');">1</button><button type="button" onclick="addNum('2', 'passw');">2</button><button type="button" onclick="addNum('3', 'passw');">3</button><button type="button" onclick="addNum('4', 'passw');">4</button><button type="button" onclick="addNum('5', 'passw');">5</button><button type="button" onclick="addNum('6', 'passw');">6</button><button type="button" onclick="addNum('7', 'passw');">7</button><button type="button" onclick="addNum('8', 'passw');">8</button><button type="button" onclick="addNum('9', 'passw');">9</button><button type="button" onclick="clearNum('passw');">C</button><button type="button" onclick="addNum('0', 'passw');">0</button><button type="button" class="pin-delete" onclick="delNum('passw');" aria-label="Стереть последнюю цифру">⌫</button></div><div class="pin-actions"><button type="button" onclick="closeModal();">Отмена</button><button type="button" class="pin-confirm" onclick="applyEnterPin();">Подтвердить</button></div></div></div>
 	<!-- pay by card dialog -->
 	<div id="pay_by_card_dialog" class="window">
 		<div class="logo"></div>
@@ -869,56 +830,15 @@ function handleSbpResponse(result) {
 
 
 
-	<!-- PromoCode dialog -->
-	<div id="promocode_dialog" class="window">
-		<div class="logo"></div>
-		<div id="promocode_dialog_content">
-			<div class="font_32 dialog_text_box">Введите промокод</div>
-			<table width="100%">
-				<tr>
-					<td align="center" colspan="3">
-						<input id="promocode_input"><br/>
-						<table>
-							<tr>
-								<td><button onclick="addNum('1', 'promocode_input');" class="num_pad_button">1</button></td>
-								<td><button onclick="addNum('2', 'promocode_input');" class="num_pad_button">2</button></td>
-								<td><button onclick="addNum('3', 'promocode_input');" class="num_pad_button">3</button></td>
-							</tr>
-							<tr>
-								<td><button onclick="addNum('4', 'promocode_input');" class="num_pad_button">4</button></td>
-								<td><button onclick="addNum('5', 'promocode_input');" class="num_pad_button">5</button></td>
-								<td><button onclick="addNum('6', 'promocode_input');" class="num_pad_button">6</button></td>
-							</tr>
-							<tr>
-								<td><button onclick="addNum('7', 'promocode_input');" class="num_pad_button">7</button></td>
-								<td><button onclick="addNum('8', 'promocode_input');" class="num_pad_button">8</button></td>
-								<td><button onclick="addNum('9', 'promocode_input');" class="num_pad_button">9</button></td>
-							</tr>
-							<tr>
-								<td><button onclick="clearNum('promocode_input');" class="num_pad_button">C</button></td>
-								<td><button onclick="addNum('0', 'promocode_input');" class="num_pad_button">0</button></td>
-								<td><button onclick="delNum('promocode_input');" class="num_pad_button"><</button></td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="3">
-						<div id="promocode_result_msg"></div>
-					</td>
-				</tr>
-				<tr>
-					<td width="43%">
-						<a><button class="modal_button" id="promocode_close" onclick="closeModal();">отмена</button></a>
-					</td>
-					<td width="4%"></td>
-					<td width="43%">
-						<a><button class="modal_button" id="promocode_apply" onclick="applyEnterPromoCode();">применить</button></a>
-					</td>
-				</tr>
-			</table>
-		</div>
-	</div>
+<!-- PromoCode dialog -->
+<div id="promocode_dialog" class="window" role="dialog" aria-modal="true" aria-labelledby="promo_heading">
+<div id="promocode_dialog_content">
+<h2 id="promo_heading">Введите промокод</h2>
+<input id="promocode_input" aria-label="Промокод" autocomplete="off" spellcheck="false" maxlength="40">
+<div id="promo_keyboard"></div>
+<div id="promocode_result_msg" role="status" aria-live="polite"></div>
+<div class="promo-actions"><button id="promocode_close" onclick="closeModal();">Отмена</button><button id="promocode_apply" onclick="applyEnterPromoCode();">Применить</button></div>
+</div></div>
 
 	<!-- Bonus Info dialog -->
 	<div id="bonus_dialog" class="window">

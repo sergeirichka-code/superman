@@ -1,21 +1,21 @@
 (function () {
   'use strict';
-  var latin = true;
+  
   window.addEventListener('load', function () {
     var input = document.getElementById('promocode_input');
     var keyboard = document.getElementById('promo_keyboard');
     var originalApply = window.applyEnterPromoCode;
     function render() {
       keyboard.innerHTML = '';
-      var rows = latin ? ['1234567890', 'QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM-'] : ['1234567890', 'ЙЦУКЕНГШЩЗХЪ', 'ФЫВАПРОЛДЖЭ', 'ЯЧСМИТЬБЮЁ-'];
+      var rows = ['123', '456', '789'];
       rows.forEach(function (row) {
         var line = document.createElement('div'); line.className = 'promo-key-row';
         Array.from(row).forEach(function (key) { addKey(line, key, function () { edit(key); }); });
         keyboard.appendChild(line);
       });
       var line = document.createElement('div'); line.className = 'promo-key-row promo-tools';
-      addKey(line, latin ? 'РУС' : 'ENG', function () { latin = !latin; render(); });
       addKey(line, 'Очистить', function () { input.value = ''; input.focus(); });
+      addKey(line, '0', function () { edit('0'); });
       addKey(line, '⌫', function () { edit(null); });
       keyboard.appendChild(line);
     }
@@ -33,13 +33,16 @@
       input.value = next; input.focus(); input.setSelectionRange(start + (value || '').length, start + (value || '').length);
       input.dispatchEvent(new Event('input', {bubbles:true}));
     }
+    input.setAttribute('inputmode', 'numeric');
+    input.setAttribute('pattern', '[0-9]*');
+    input.addEventListener('input', function () { input.value = input.value.replace(/[^0-9]/g, ''); });
     render();
     window.addPromoCode = function () {
       input.value = ''; document.getElementById('promocode_result_msg').textContent = '';
       openModal('#promocode_dialog'); setTimeout(function () { input.focus(); }, 220);
     };
     window.applyEnterPromoCode = function () {
-      input.value = input.value.trim();
+      input.value = input.value.replace(/[^0-9]/g, '');
       var message = document.getElementById('promocode_result_msg');
       if (!input.value) { message.textContent = 'Введите промокод'; input.focus(); return; }
       if (window.paymentPreviewEnabled) {

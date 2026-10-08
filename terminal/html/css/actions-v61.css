@@ -73,3 +73,11 @@ body.actions-v61{display:flex;align-items:center;justify-content:center;cursor:d
 
 /* v79: match father's visual scale to neighbouring promotions. */
 #action_a .promo-art{height:360px;width:auto;top:10px;clip-path:inset(0 0 58px 0)}
+
+/* v94: centred portrait and consistently coloured prices. */
+#haircut_f .promo-art{inset:14px auto auto 50%;transform:translateX(-50%);width:300px;height:300px;object-fit:contain;object-position:center}
+.actions-v61 .promo-copy{align-items:center;text-align:center}
+.actions-v61 .promo-price{display:block;width:100%;text-align:center;color:#ef3f43}
+.actions-v61 .promo-card:disabled .promo-copy{opacity:1}
+.actions-v61 .promo-card:disabled .promo-name{opacity:.65}
+.actions-v61 .promo-unavailable{left:0;width:100%;text-align:center}

@@ -12,3 +12,13 @@
 #promocode_dialog #promocode_apply{background:#ef3f43;color:white;border-color:#ef3f43}
 #promocode_dialog button:disabled{opacity:.5;cursor:default}
 #promocode_dialog .modal_button{width:100%;margin-top:20px}
+
+/* v94: numeric promo codes only. */
+#boxes #promocode_dialog{width:660px;overflow:visible}
+#promocode_dialog .promo-key-row button{height:80px;font-size:32px}
+#promocode_dialog .promo-tools button{font-size:26px}
+#promocode_dialog #promocode_result_msg{width:100%;height:auto;min-height:66px;font-size:20px}
+#promocode_dialog #promocode_success_box{margin:24px 0}
+#promocode_dialog #promocode_success_btns{margin:24px 0 0}
+
+#promocode_dialog #promocode_input:focus{outline:none;box-shadow:0 0 0 3px #ef3f431a}

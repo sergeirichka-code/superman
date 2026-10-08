@@ -96,3 +96,23 @@ body.payment-v76{display:flex;align-items:center;justify-content:center;color:#1
 .payment-stage .payment-submit #btn_pay{height:86px;background:#ef3f43;color:#fff;display:flex;gap:18px;justify-content:center;border:2px solid #ef3f43}
 .payment-stage .payment-submit #btn_pay .thumb1text{font-size:32px}
 .payment-stage .payment-submit #btn_pay:disabled{background:#fbe5e7!important;color:#ba6970!important;border-color:#eab7bd}
+
+/* v94: align the checkout with the first cards and soften selection. */
+.checkout-panel{margin-top:42px;padding:20px 24px}
+.payment-v76 .extra_cell.active{background:#edf2f9;border-color:#ef3f43;color:#142c5d}
+.payment-v76 .extra_cell.active .extra_cost{color:#ef3f43}
+.payment-v76 .extra_cell.active .extra_count_btn{background:#142c5d}
+.payment-v76 .popular-extra.active .popular-art{opacity:1}
+.payment-v76 .checkout-panel .payment-total{padding:16px 0 12px}
+.checkout-panel .payment-methods{margin-top:16px;gap:10px}
+.checkout-panel .promo-entry{margin-top:16px}
+.checkout-panel .chosen-service{padding-bottom:14px}
+
+/* v95: clearly red selection with a softer fill than the payment action. */
+.payment-v76 .extra_cell.active{background:#f47c80;border-color:#ef3f43;color:#142c5d}
+.payment-v76 .extra_cell.active .extra_cost{color:#142c5d}
+.payment-v76 .extra_cell.active .extra_count_btn{background:#142c5d;color:#fff}
+
+/* v96: approved selection option 3. */
+.payment-v76 .extra_cell.active{background:#b94b54;border-color:#ef3f43;color:#fff}
+.payment-v76 .extra_cell.active .extra_cost{color:#fff}
